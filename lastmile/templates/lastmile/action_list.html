@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>{{ action_list.count }} Action Items {% if view.kwargs.status %}({{ view.kwargs.status }}){% endif %}</h1>
+{% if view.kwargs.status %}
+<a href="{% url 'action-list' %}">View All Action Items</a>
+{% else %}
+<a href="{% url 'action-list-by-status' status='active' %}">View Active Only</a>
+{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Action Item</th>
+      <th scope="col">Commitment</th>
+      <th scope="col">Responsible Party</th>
+      <th scope="col">Expected Date</th>
+      <th scope="col">Completion Date</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for action in action_list %}
+    <tr>
+      <th scope="row"><a href="{% url 'action-detail' pk=action.id %}">{{ action.name }}</a></th>
+      <td><a href="{{ action.commitment.get_absolute_url }}">{{ action.commitment }}</a></td>
+      <td><a href="{{ action.responsible_party.get_absolute_url }}">{{ action.responsible_party }}</a></td>
+      <td>{{ action.expected_completion_date }}</td>
+      <td>{{ action.completion_date }}</td>
+      <td>{{ action.get_status_display }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

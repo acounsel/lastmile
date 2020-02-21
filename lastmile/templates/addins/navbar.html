@@ -13,7 +13,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'commitment-list' %}">View Commitments</a>
-          <a class="dropdown-item" href="{% url Commitment|admin_urlname:'add' %}">Add Commitment</a>
+          <a class="dropdown-item" href="{% url 'commitment-create' %}">Add Commitment</a>
         </div>
       </li>
       <li class="nav-item dropdown mr-3">
@@ -22,7 +22,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'action-list' %}">View Actions</a>
-          <a class="dropdown-item" href="{% url Action|admin_urlname:'add' %}">Add Action</a>
+          <a class="dropdown-item" href="{% url 'action-create' %}">Add Action</a>
         </div>
       </li>
       <li class="nav-item dropdown mr-auto">
@@ -31,7 +31,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'actor-list' %}">View Parties</a>
-          <a class="dropdown-item" href="{% url Actor|admin_urlname:'add' %}">Add Party</a>
+          <a class="dropdown-item" href="{% url 'actor-create' %}">Add Party</a>
         </div>
       </li>
      <!--  <li class="nav-item dropdown mr-auto">

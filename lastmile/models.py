@@ -22,7 +22,8 @@ class Commitment(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     status = models.CharField(
-        max_length=100, choices=STATUS_CHOICES)
+        max_length=100, choices=STATUS_CHOICES,
+        default=PENDING)
     expected_completion_date = models.DateField(
         blank=True, null=True)
     completion_date = models.DateField(
@@ -43,7 +44,7 @@ class Commitment(models.Model):
 class Actor(models.Model):
 
     name = models.CharField(max_length=255)
-    user = models.OneToOneField(User, 
+    user = models.OneToOneField(User,
         on_delete=models.SET_NULL,
         blank=True, null=True)
 
@@ -51,6 +52,9 @@ class Actor(models.Model):
         if self.user:
             return '{} (User)'.format(self.name)
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('actor-detail', kwargs={'pk':self.id})
 
     def get_completed_actions(self):
         return self.action_set.filter(status=Action.COMPLETE)
@@ -78,11 +82,12 @@ class Action(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     status = models.CharField(
-        max_length=100, choices=STATUS_CHOICES)
-    commitment = models.ForeignKey(Commitment, 
+        max_length=100, choices=STATUS_CHOICES,
+        default=PENDING)
+    commitment = models.ForeignKey(Commitment,
         on_delete=models.CASCADE,
         blank=True, null=True)
-    responsible_party = models.ForeignKey(Actor, 
+    responsible_party = models.ForeignKey(Actor,
         on_delete=models.SET_NULL,
         blank=True, null=True)
     expected_completion_date = models.DateField(
@@ -92,6 +97,9 @@ class Action(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('action-detail', kwargs={'pk':self.id})
 
     def get_status(self):
         date = self.expected_completion_date
@@ -120,14 +128,14 @@ class Action(models.Model):
                 return 'primary text-white'
 
 class Update(models.Model):
-    # Delays refer to active actions that have passed their 
+    # Delays refer to active actions that have passed their
     #  expected completion date
     DELAY = 'delay'
     # Revisions are updates/edits to existing model instances
     REVISION = 'revision'
     # Additions are creations of new modal instances
     ADDITION = 'addition'
-    # Status Change refers to an update 
+    # Status Change refers to an update
     #  on action/commitment status
     STATUS_CHANGE = 'status'
     # Catch-all for any remaining updates
@@ -141,15 +149,15 @@ class Update(models.Model):
     )
 
     description = models.TextField(blank=True)
-    _type = models.CharField(max_length=100, 
+    _type = models.CharField(max_length=100,
         choices=TYPE_CHOICES, default=OTHER)
-    commitment = models.ForeignKey(Commitment, 
+    commitment = models.ForeignKey(Commitment,
         on_delete=models.SET_NULL,
         blank=True, null=True)
-    action = models.ForeignKey(Action, 
+    action = models.ForeignKey(Action,
         on_delete=models.SET_NULL,
         blank=True, null=True)
-    actor = models.ForeignKey(Actor, 
+    actor = models.ForeignKey(Actor,
         on_delete=models.SET_NULL,
         blank=True, null=True)
     date_created = models.DateField(auto_now_add=True)
@@ -159,14 +167,14 @@ class Update(models.Model):
     def __str__(self):
         if self.action:
             return '{0} - {1} - {2} - {3}'.format(
-                self.get__type_display(), 
-                self.action, 
+                self.get__type_display(),
+                self.action,
                 self.commitment,
                 self.date_created
             )
         else:
             return '{0} - {1} - {2}'.format(
-                self.get__type_display(), 
+                self.get__type_display(),
                 self.commitment,
                 self.date_created
             )
@@ -179,17 +187,20 @@ class Update(models.Model):
 
     @receiver(pre_save, sender=Commitment)
     def save_commitment(sender, instance, **kwargs):
+        print('receiver working')
         try:
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
+            print('create obj')
             Update.save_addition(instance, 'commitment')
         else:
+            print('update_obj')
             for field in sender._meta.get_fields():
                 Update.save_revision(
                     field, obj, instance, 'commitment')
 
     @receiver(pre_save, sender=Action)
-    def save_commitment(sender, instance, **kwargs):
+    def save_action(sender, instance, **kwargs):
         try:
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
@@ -208,8 +219,8 @@ class Update(models.Model):
                 model_name.title()),
             _type=Update.ADDITION,
         )
-        setattr(update, model_name, instance)
-        update.save()
+        # setattr(update, model_name, instance)
+        # update.save()
         return update
 
     def save_revision(field, obj, instance, model_name):
@@ -226,5 +237,5 @@ class Update(models.Model):
                 update.save()
                 return update
         except Exception as error:
-            print(error)  
+            print(error)
             pass
