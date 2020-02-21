@@ -7,6 +7,11 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 
+class Agreement(models.Model):
+    
+    name = models.CharField(max_length=255)
+    
+
 class Commitment(models.Model):
     PENDING = 'pending'
     ACTIVE = 'active'
@@ -21,6 +26,9 @@ class Commitment(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    agreement = models.ForeignKey(Agreement,
+        on_delete=models.CASCADE,
+        blank=True, null=True)
     status = models.CharField(
         max_length=100, choices=STATUS_CHOICES,
         default=PENDING)
@@ -40,6 +48,18 @@ class Commitment(models.Model):
 
     def get_absolute_url(self):
         return reverse('commitment-detail', kwargs={'pk':self.id})
+
+    def save(self, *args, **kwargs):
+        new = False
+        if not self.id:
+            new = True
+        super(Commitment, self).save(*args, **kwargs)
+        if new:
+            update = Update.objects.create(
+                description='Commitment Added',
+                _type=Update.ADDITION,
+                commitment=self,
+            )
 
 class Actor(models.Model):
 
@@ -100,6 +120,19 @@ class Action(models.Model):
 
     def get_absolute_url(self):
         return reverse('action-detail', kwargs={'pk':self.id})
+
+    def save(self, *args, **kwargs):
+        new = False
+        if not self.id:
+            new = True
+        super(Action, self).save(*args, **kwargs)
+        if new:
+            update = Update.objects.create(
+                description='Action Added',
+                _type=Update.ADDITION,
+                action=self,
+                commitment=self.commitment,
+            )
 
     def get_status(self):
         date = self.expected_completion_date
@@ -187,12 +220,10 @@ class Update(models.Model):
 
     @receiver(pre_save, sender=Commitment)
     def save_commitment(sender, instance, **kwargs):
-        print('receiver working')
         try:
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
-            print('create obj')
-            Update.save_addition(instance, 'commitment')
+            pass
         else:
             print('update_obj')
             for field in sender._meta.get_fields():
@@ -204,8 +235,9 @@ class Update(models.Model):
         try:
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
-            update = Update.save_addition(instance, 'action')
-            update.add_commitment()
+            pass
+            # update = Update.save_addition(instance, 'action')
+            # update.add_commitment()
         else:
             for field in sender._meta.get_fields():
                 update = Update.save_revision(

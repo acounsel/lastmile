@@ -17,7 +17,7 @@
     <tbody>
       {% for update in action.update_set.all %}
       <tr>
-        <th scope="row"><a href="">{{ update.date_created }}</a></th>
+        <th scope="row">{{ update.date_created }}</th>
         <td>{{ update.get__type_display }}</td>
         <td>{{ update.description }}</td>
       </tr>

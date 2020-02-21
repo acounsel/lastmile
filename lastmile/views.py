@@ -24,6 +24,9 @@ class CommitmentCreate(CommitmentView, CreateView):
 class CommitmentUpdate(CommitmentView, UpdateView):
     pass
 
+class Dashboard(CommitmentList):
+    template_name = 'lastmile/dashboard.html'
+
 class ActionView(LoginRequiredMixin, View):
     model = Action
     fields = ['name', 'description', 'status', 'commitment',

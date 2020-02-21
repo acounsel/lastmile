@@ -3,8 +3,9 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.CommitmentList.as_view(), name='commitment-list'),
+    path('', views.Dashboard.as_view(), name='dashboard'),
     path('commitments/', include([
+        path('', views.CommitmentList.as_view(), name='commitment-list'),
         path('add/',views.CommitmentCreate.as_view(), name='commitment-create'),
         path('<pk>/', include([
             path('', views.CommitmentDetail.as_view(), name='commitment-detail'),
