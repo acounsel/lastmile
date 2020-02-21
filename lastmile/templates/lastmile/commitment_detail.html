@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>{{ commitment.name }}</h1>
+<h2>Status: {{ commitment.get_status_display }}</h2>
+<h3>{{ commitment.description }}</h3>
+<div class="mt-5">
+  <h4>Actions</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Action Item</th>
+        <th scope="col">Responsible Party</th>
+        <th scope="col">Expected Date</th>
+        <th scope="col">Completion Date</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for action in commitment.action_set.all %}
+      <tr>
+        <th scope="row"><a href="">{{ action.name }}</a></th>
+        <td><a href="{% url 'actor-detail' pk=action.responsible_party.id %}">{{ action.responsible_party }}</a></td>
+        <td>{{ action.expected_completion_date }}</td>
+        <td>{{ action.completion_date }}</td>
+        <td>{{ action.get_status_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="mt-5">
+  <h4>History</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Type</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for update in commitment.update_set.all %}
+      <tr>
+        <th scope="row"><a href="">{{ update.date_created }}</a></th>
+        <td>{{ update.get__type_display }}</td>
+        <td>{{ update.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

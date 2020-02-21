@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Parties</h1>
+<div class="mt-5">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Responsible Action Items</th>
+        <th scope="col">Ongoing</th>
+        <th scope="col">Completed</th>
+        <th scope="col">Overdue</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for actor in actor_list %}
+      <tr>
+        <th scope="row"><a href="">{{ actor.name }}</a></th>
+        <td>{{ actor.action_set.count }}</td>
+        <td>{{ actor.get_completed_actions.count }}</td>
+        <td>{{ actor.get_ongoing_actions.count }}</td>
+        <td>{{ actor.get_overdue_actions.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

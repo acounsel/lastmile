@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>{{ actor.name }}</h1>
+<div class="mt-5">
+  <h4>Actions</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Commitment</th>
+        <th scope="col">Action Item</th>
+        <th scope="col">Expected Date</th>
+        <th scope="col">Completion Date</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for action in actor.action_set.all %}
+      <tr class="bg-{{ action.get_status_color }}">
+        <th scope="row"><a href="" class="text-white">{{ action.commitment.name }}</a></th>
+        <td>{{ action.name }}</td>
+        <td>{{ action.expected_completion_date }}</td>
+        <td>{{ action.completion_date }}</td>
+        <td>{{ action.get_status_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
