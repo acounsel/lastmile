@@ -165,25 +165,66 @@ class Update(models.Model):
                 self.date_created
             )
         else:
-            return '{0} - {2} - {3}'.format(
+            return '{0} - {1} - {2}'.format(
                 self.get__type_display(), 
                 self.commitment,
                 self.date_created
             )
 
+    def add_commitment(self):
+        if self.action:
+            self.commitment = self.action.commitment
+            self.save()
+        return self
 
     @receiver(pre_save, sender=Commitment)
-    def save_commitment_update(sender, instance, **kwargs):
+    def save_commitment(sender, instance, **kwargs):
         try:
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
-            Update.objects.create(
-                description='Commitment added',
-                _type=Update.ADDITION,
-                commitment=instance,
-            )
+            Update.save_addition(instance, 'commitment')
         else:
-            pass
-            # if not obj.some_field == instance.some_field: # Field has changed
-                # do something
+            for field in sender._meta.get_fields():
+                Update.save_revision(
+                    field, obj, instance, 'commitment')
 
+    @receiver(pre_save, sender=Action)
+    def save_commitment(sender, instance, **kwargs):
+        try:
+            obj = sender.objects.get(pk=instance.pk)
+        except sender.DoesNotExist:
+            update = Update.save_addition(instance, 'action')
+            update.add_commitment()
+        else:
+            for field in sender._meta.get_fields():
+                update = Update.save_revision(
+                    field, obj, instance, 'action')
+                if update:
+                    update.add_commitment()
+
+    def save_addition(instance, model_name):
+        update = Update.objects.create(
+            description='{0} added'.format(
+                model_name.title()),
+            _type=Update.ADDITION,
+        )
+        setattr(update, model_name, instance)
+        update.save()
+        return update
+
+    def save_revision(field, obj, instance, model_name):
+        try:
+            old = getattr(obj, field.name)
+            new = getattr(instance, field.name)
+            if old != new:
+                update = Update.objects.create(
+                    description='{0} changed from {1} to {2}' \
+                    .format(field.name.title(), old, new),
+                    _type=Update.REVISION,
+                )
+                setattr(update, model_name, instance)
+                update.save()
+                return update
+        except Exception as error:
+            print(error)  
+            pass
