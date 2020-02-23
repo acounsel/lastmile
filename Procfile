@@ -1,1 +1,1 @@
-web: gunicorn lastmile.wsgi —-log-file -
+web: gunicorn django_lastmile.wsgi —-log-file -
