@@ -7,6 +7,13 @@ import django_heroku
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+TEMPLATEDIRS = ['lastmile/templates',]
+
+
 # Application definition
 
 INSTALLED_APPS = [
