@@ -1,8 +1,5 @@
 import os
 
-from .local_settings import OFFLINE, BASE_DIR, SECRET_KEY, DEBUG
-from .local_settings import ALLOWED_HOSTS, TEMPLATEDIRS
-from .local_settings import DATABASES, STATIC_URL, STATIC_ROOT
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 # Quick-start development settings - unsuitable for production
@@ -87,3 +84,7 @@ USE_L10N = True
 USE_TZ = True
 
 
+try:
+    from local_settings import *
+except Exception as e:
+    pass
