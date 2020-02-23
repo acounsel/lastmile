@@ -4,6 +4,5 @@
 __pycache__
 venv
 db.sqlite3
-/static
 .DS_Store
 local_settings.py
