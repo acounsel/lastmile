@@ -193,9 +193,12 @@ class Update(models.Model):
     actor = models.ForeignKey(Actor,
         on_delete=models.SET_NULL,
         blank=True, null=True)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     achieved_number = models.IntegerField(
         blank=True, null=True)
+
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         if self.action:

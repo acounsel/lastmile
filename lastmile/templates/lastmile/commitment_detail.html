@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       {% for action in commitment.action_set.all %}
-      <tr>
+      <tr class="bg-{{ action.get_status_color }}">
         <th scope="row"><a href="{% url 'action-detail' pk=action.id %}">{{ action.name }}</a></th>
         <td><a href="{% if action.responsible_party %}{% url 'actor-detail' pk=action.responsible_party.id %}{% endif %}">{{ action.responsible_party }}</a></td>
         <td>{{ action.expected_completion_date }}</td>
