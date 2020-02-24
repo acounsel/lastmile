@@ -10,8 +10,9 @@ class CommitmentView(LoginRequiredMixin, View):
     login_url = '/login/'
     model = Commitment
     fields = ['name', 'description', 'status',
-        'expected_completion_date', 'completion_date',
-        'target_number', 'achieved_number']
+        'status_description', 'expected_completion_date',
+        'completion_date', 'target_number',
+        'achieved_number']
 
 class CommitmentList(CommitmentView, ListView):
     pass
@@ -31,7 +32,8 @@ class Dashboard(CommitmentList):
 class ActionView(LoginRequiredMixin, View):
     login_url = '/login/'
     model = Action
-    fields = ['name', 'description', 'status', 'commitment',
+    fields = ['name', 'description', 'status',
+        'status_description','commitment',
         'responsible_party', 'expected_completion_date',
         'completion_date']
 

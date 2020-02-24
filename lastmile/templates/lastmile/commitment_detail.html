@@ -3,7 +3,8 @@
 <h1>{{ commitment.name }}</h1>
 <p><a href="{% url 'commitment-update' pk=commitment.id %}">Edit</a></p>
 <h2>Status: {{ commitment.get_status_display }}</h2>
-<h3>{{ commitment.description }}</h3>
+<h3>Explanation: {{ commitment.status_description }}</h3>
+<p class="pt-3">{{ commitment.description }}</p>
 <div class="mt-5">
   <h4>Actions</h4>
   <a href="{% url 'commitment-action-create' pk=commitment.id %}">Add Action</a>

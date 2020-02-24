@@ -4,6 +4,7 @@
 <h2>{{ action.name }}</h2>
 <p><a href="{% url 'action-update' pk=action.id %}">Edit</a></p>
 <h3>Status: {{ action.get_status_display }}</h3>
-<h4>{{ action.description }}</h4>
+<h4>Explanation: {{ action.status_description }}</h4>
+<p>{{ action.description }}</p>
 {% include 'addins/update_table.html' %}
 {% endblock %}

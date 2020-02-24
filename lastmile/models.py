@@ -32,6 +32,7 @@ class Commitment(models.Model):
     status = models.CharField(
         max_length=100, choices=STATUS_CHOICES,
         default=PENDING)
+    status_description = models.TextField(blank=True)
     expected_completion_date = models.DateField(
         blank=True, null=True)
     completion_date = models.DateField(
@@ -107,6 +108,7 @@ class Action(models.Model):
     status = models.CharField(
         max_length=100, choices=STATUS_CHOICES,
         default=PENDING)
+    status_description = models.TextField(blank=True)
     commitment = models.ForeignKey(Commitment,
         on_delete=models.CASCADE,
         blank=True, null=True)

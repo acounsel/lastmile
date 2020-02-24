@@ -16,7 +16,7 @@
       <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}">{{ commitment.name }}</a></th>
       <td>{{ commitment.target_number }}</td>
       <td>{{ commitment.achieved_number }}</td>
-      <td>{{ commitment.get_status_display }}</td>
+      <td title="{{ commitment.status_description }}">{{ commitment.get_status_display }}</td>
     </tr>
     {% endfor %}
   </tbody>
