@@ -85,7 +85,10 @@ class Actor(models.Model):
             Q(status=Action.ACTIVE))
 
     def get_overdue_actions(self):
-        return self.action_set.filter(status=Action.COMPLETE)
+        i = 0
+        for action in self.action_set.filter(status=Action.ACTIVE):
+            i += 1
+        return i
 
 class Action(models.Model):
     PENDING = 'pending'
@@ -139,26 +142,39 @@ class Action(models.Model):
         if date and self.status == self.ACTIVE:
             if date < datetime.date.today():
                 return 'overdue'
-            elif date + datetime.delta(days=7) < \
+            elif date + datetime.timedelta(days=7) < \
             datetime.date.today():
                 return 'upcoming'
-        return 'ongoing'
+            else:
+                return 'ongoing'
+        return ''
 
     def get_status_color(self):
         if self.status == self.PENDING:
             return 'light'
         elif self.status == self.COMPLETE:
-            return 'success text-white'
+            return 'success'
         elif self.status == self.FAILED:
-            return 'dark text-white'
+            return 'dark'
         else:
             status = self.get_status()
             if status == 'overdue':
-                return 'danger text-white'
+                return 'danger'
             elif status == 'upcoming':
                 return 'warning'
             else:
-                return 'primary text-white'
+                return 'primary'
+    
+    def get_text_color(self):
+        bg_color = self.get_status_color()
+        if bg_color in ['light', 'warning']:
+            return 'text-dark'
+        else:
+            return 'text-white'
+    
+    def is_delayed(self):
+        if self.get_status() == 'overdue':
+            return True
 
 class Update(models.Model):
     # Delays refer to active actions that have passed their
