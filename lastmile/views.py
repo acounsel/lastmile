@@ -7,6 +7,7 @@ from django.urls import reverse
 from .models import Action, Actor, Commitment, Update
 
 class CommitmentView(LoginRequiredMixin, View):
+    login_url = '/login/'
     model = Commitment
     fields = ['name', 'description', 'status',
         'expected_completion_date', 'completion_date',
@@ -28,6 +29,7 @@ class Dashboard(CommitmentList):
     template_name = 'lastmile/dashboard.html'
 
 class ActionView(LoginRequiredMixin, View):
+    login_url = '/login/'
     model = Action
     fields = ['name', 'description', 'status', 'commitment',
         'responsible_party', 'expected_completion_date',
@@ -64,6 +66,7 @@ class CommitmentActionCreate(ActionCreate):
                 'pk':self.kwargs.get('pk')})
 
 class ActorView(LoginRequiredMixin, View):
+    login_url = '/login/'
     model = Actor
     fields = ['name', 'user']
 

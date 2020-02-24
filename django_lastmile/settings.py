@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'lastmile',
     'django_extensions',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -95,9 +96,12 @@ USE_L10N = True
 USE_TZ = True
 
 
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+
 try:
-    from local_settings import *
+    from .local_settings import *
 except Exception as e:
+    print(e)
     pass
 
 # Activate Django-Heroku.

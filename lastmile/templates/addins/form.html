@@ -1,6 +1,7 @@
+{% load crispy_forms_tags %}
 <form class="mt-5" method="POST">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form|crispy }}
   {{ form.errors  }}
   <input type="submit" value="Submit">
 </form>
