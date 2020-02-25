@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>{{ commitmentcategory.name }}</h1>
+<p><a href="{% url 'commitment-category-update' slug=commitmentcategory.slug %}">Edit</a></p>
+<p class="pt-3">{{ commitmentcategory.description }}</p>
+<div class="mt-5">
+  <h4>Actions</h4>
+  <a href="{% url 'category-commitment-create' slug=commitmentcategory.slug %}">Add Commitment</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Commitment</th>
+        <th scope="col">Action Items</th>
+        <th scope="col">Target</th>
+        <th scope="col">Current</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for commitment in commitmentcategory.commitment_set.all %}
+      <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
+        <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="{{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
+        <td>{{ commitment.action_set.count }}</td>
+        <td>{{ commitment.target }}</td>
+        <td>{{ commitment.current }}</td>
+        <td>{{ commitment.get_status_display }} {% if commitment.get_status %}({{ commitment.get_status|title }}){% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="mt-5">
+  <h4>History</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Type</th>
+        <th scope="col">Action</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for update in commitmentcategory.get_updates %}
+      <tr>
+        <th scope="row">{{ update.date_created }}</th>
+        <td>{{ update.get__type_display }}</td>
+        <td>{{ update.action }}</td>
+        <td>{{ update.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

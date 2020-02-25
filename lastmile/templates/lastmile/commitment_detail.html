@@ -2,9 +2,11 @@
 {% block body %}
 <h1>{{ commitment.name }}</h1>
 <p><a href="{% url 'commitment-update' pk=commitment.id %}">Edit</a></p>
-<h2>Status: {{ commitment.get_status_display }}</h2>
-<h3>Explanation: {{ commitment.status_description }}</h3>
+<h2><strong>Category:</strong> <a href="{{ commitment.category.get_absolute_url }}">{{ commitment.category.name }}</a></h2>
+<h3><strong>Status:</strong> {{ commitment.get_status_display }}</h3>
+<p><strong>Explanation:</strong> {{ commitment.status_description }}</p>
 <p class="pt-3">{{ commitment.description }}</p>
+{% if self.get_percent_progress %}{{ self.get_percent_progress }}% Progress{% endif %}<p></p>
 <div class="mt-5">
   <h4>Actions</h4>
   <a href="{% url 'commitment-action-create' pk=commitment.id %}">Add Action</a>

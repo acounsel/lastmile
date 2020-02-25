@@ -4,12 +4,21 @@ from . import views
 
 urlpatterns = [
     path('', views.Dashboard.as_view(), name='dashboard'),
+    path('category/', include([
+        path('', views.CommitmentCategoryList.as_view(), name='commitment-category-list'),
+        path('add/', views.CommitmentCategoryCreate.as_view(), name='commitment-category-create'),
+        path('<slug>/', include([
+            path('', views.CommitmentCategoryDetail.as_view(), name='commitment-category-detail'),
+            path('add-commitment/', views.CategoryCommitmentCreate.as_view(), name='category-commitment-create'),
+            path('update', views.CommitmentCategoryUpdate.as_view(), name='commitment-category-update'),
+        ])),
+    ])),
     path('commitments/', include([
         path('', views.CommitmentList.as_view(), name='commitment-list'),
         path('add/',views.CommitmentCreate.as_view(), name='commitment-create'),
         path('<pk>/', include([
             path('', views.CommitmentDetail.as_view(), name='commitment-detail'),
-            path('add-action', views.CommitmentActionCreate.as_view(), name='commitment-action-create'),
+            path('add-action/', views.CommitmentActionCreate.as_view(), name='commitment-action-create'),
             path('update/', views.CommitmentUpdate.as_view(), name='commitment-update'),
         ])),
         

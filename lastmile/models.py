@@ -6,11 +6,40 @@ from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.text import slugify
 
 class Agreement(models.Model):
     
     name = models.CharField(max_length=255)
+
+class CommitmentCategory(models.Model):
     
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(
+        max_length=255, blank=True)
+    description = models.TextField(blank=True)
+    agreement = models.ForeignKey(Agreement,
+        on_delete=models.SET_NULL,
+        blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = self.create_unique_slug()
+        super(CommitmentCategory, self).save(*args, **kwargs)
+
+    def create_unique_slug(self):
+        iterator = 1
+        slug = slugify(self.name)
+        while self.__class__.objects.exclude(id=self.id).filter(slug=slug):
+            iterator += 1
+            slug = slugify(self.name) + str(iterator)
+        return slug
+        
+    def get_absolute_url(self):
+        return reverse('commitment-category-detail',
+            kwargs={'slug':self.slug})
 
 class Commitment(models.Model):
     PENDING = 'pending'
@@ -26,6 +55,9 @@ class Commitment(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    category = models.ForeignKey(CommitmentCategory,
+        on_delete=models.SET_NULL,
+        blank=True, null=True)
     agreement = models.ForeignKey(Agreement,
         on_delete=models.CASCADE,
         blank=True, null=True)
@@ -37,15 +69,11 @@ class Commitment(models.Model):
         blank=True, null=True)
     completion_date = models.DateField(
         blank=True, null=True)
-    
-    target_number = models.IntegerField(
-        blank=True, null=True)
-    achieved_number = models.IntegerField(
-        blank=True, null=True)
+    goal = models.CharField(max_length=255,
+        blank=True)
+    progress_toward_goal = models.CharField(max_length=255,
+        blank=True)
 
-    def __str__(self):
-        return '{0}: {1}'.format(
-            self.name, self.get_status_display())
 
     def get_absolute_url(self):
         return reverse('commitment-detail', kwargs={'pk':self.id})
@@ -61,6 +89,24 @@ class Commitment(models.Model):
                 _type=Update.ADDITION,
                 commitment=self,
             )
+
+    def is_numeric(self):
+        try:
+            goal_num = int(self.goal)
+            return True
+        except Exception as e:
+            return False
+            
+    def get_percent_progress(self):
+        if self.is_numeric():
+            if self.progress_toward_goal:
+                try:
+                    progress_num = int(
+                        self.progress_toward_goal)
+                    return progress_num / int(self.goal)
+                except Exception as error:
+                    return 0
+        return None
 
 class Actor(models.Model):
 
@@ -212,8 +258,8 @@ class Update(models.Model):
         on_delete=models.SET_NULL,
         blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    achieved_number = models.IntegerField(
-        blank=True, null=True)
+    progress_toward_goal = models.CharField(max_length=255,
+        blank=True)
 
     class Meta:
         ordering = ['-date_created']

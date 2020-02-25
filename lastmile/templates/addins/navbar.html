@@ -14,6 +14,8 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'commitment-list' %}">View Commitments</a>
           <a class="dropdown-item" href="{% url 'commitment-create' %}">Add Commitment</a>
+          <a class="dropdown-item" href="{% url 'commitment-category-list' %}">View Categories</a>
+          <a class="dropdown-item" href="{% url 'commitment-category-create' %}">Add Category</a>
         </div>
       </li>
       <li class="nav-item dropdown mr-3">
@@ -27,11 +29,11 @@
       </li>
       <li class="nav-item dropdown mr-auto">
         <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Parties
+          Actors
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="{% url 'actor-list' %}">View Parties</a>
-          <a class="dropdown-item" href="{% url 'actor-create' %}">Add Party</a>
+          <a class="dropdown-item" href="{% url 'actor-list' %}">View Actors</a>
+          <a class="dropdown-item" href="{% url 'actor-create' %}">Add Actor</a>
         </div>
       </li>
      <!--  <li class="nav-item dropdown mr-auto">

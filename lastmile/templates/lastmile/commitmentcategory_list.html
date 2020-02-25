@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Commitment Categories</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Commitments</th>
+      <th scope="col">Action Items</th>
+      <th scope="col">Current</th>
+      <th scope="col">Delayed</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in commitmentcategory_list %}
+    <tr>
+      <th scope="row"><a href="{% url 'commitment-category-detail' slug=category.slug %}">{{ category.name }}</a></th>
+      <td>{{ category.commitment_set.count }}</td>
+      <td>{{ category.get_actions }}</td>
+      <td>{{ category.get_current_actions }}</td>
+      <td>{{ category.get_delayed_actions }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
