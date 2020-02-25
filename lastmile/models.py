@@ -107,6 +107,45 @@ class Commitment(models.Model):
                 except Exception as error:
                     return 0
         return None
+    
+    def get_status(self):
+        date = self.expected_completion_date
+        if date and self.status == self.ACTIVE:
+            if date < datetime.date.today():
+                return 'overdue'
+            elif date + datetime.timedelta(days=7) < \
+            datetime.date.today():
+                return 'upcoming'
+            else:
+                return 'ongoing'
+        return ''
+
+    def get_status_color(self):
+        if self.status == self.PENDING:
+            return 'light'
+        elif self.status == self.COMPLETE:
+            return 'success'
+        elif self.status == self.FAILED:
+            return 'dark'
+        else:
+            status = self.get_status()
+            if status == 'overdue':
+                return 'danger'
+            elif status == 'upcoming':
+                return 'warning'
+            else:
+                return 'primary'
+    
+    def get_text_color(self):
+        bg_color = self.get_status_color()
+        if bg_color in ['light', 'warning']:
+            return 'text-dark'
+        else:
+            return 'text-white'
+    
+    def is_delayed(self):
+        if self.get_status() == 'overdue':
+            return True
 
 class Actor(models.Model):
 

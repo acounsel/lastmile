@@ -6,7 +6,7 @@
 {% else %}
 <a href="{% url 'action-list-by-status' status='active' %}">View Active Only</a>
 {% endif %}
-<table class="table">
+<table class="table" data-sorting="true">
   <thead>
     <tr>
       <th scope="col">Action Item</th>
