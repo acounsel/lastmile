@@ -74,7 +74,9 @@ class Commitment(models.Model):
     progress_toward_goal = models.CharField(max_length=255,
         blank=True)
 
-
+    def __str__(self):
+        return self.name
+        
     def get_absolute_url(self):
         return reverse('commitment-detail', kwargs={'pk':self.id})
 
