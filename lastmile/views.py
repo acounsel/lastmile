@@ -4,8 +4,18 @@ from django.views.generic import View, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
 
+from .functions import get_export_response
 from .models import Action, Actor, Commitment
 from .models import CommitmentCategory, Update
+
+class ExportMixin():
+
+    def get(self, request, **kwargs):
+        resp = super().get(request, **kwargs)
+        response = get_export_response(
+            self.model, 
+            self.get_queryset())
+        return response
 
 class BaseView(LoginRequiredMixin, View):
     login_url = '/login/'
@@ -41,6 +51,9 @@ class CommitmentView(BaseView):
 class CommitmentList(CommitmentView, ListView):
     pass
 
+class CommitmentExport(ExportMixin, CommitmentList):
+    pass
+        
 class CommitmentDetail(CommitmentView, DetailView):
     pass
 
@@ -84,6 +97,9 @@ class ActionList(ActionView, ListView):
                 status=self.kwargs.get('status'))
         return queryset
 
+class ActionExport(ExportMixin, ActionList):
+    pass
+
 class ActionDetail(ActionView, DetailView):
     pass
 
@@ -96,8 +112,10 @@ class ActionUpdate(ActionView, UpdateView):
 class CommitmentActionCreate(ActionCreate):
     
     def get_initial(self):
-        initial = super(CommitmentActionCreate, self).get_initial()
-        commitment = Commitment.objects.get(id=self.kwargs.get('pk'))
+        initial = super(CommitmentActionCreate, self) \
+            .get_initial()
+        commitment = Commitment.objects.get(
+            id=self.kwargs.get('pk'))
         initial['commitment'] = commitment
         return initial.copy()
     

@@ -16,16 +16,17 @@ urlpatterns = [
     path('commitments/', include([
         path('', views.CommitmentList.as_view(), name='commitment-list'),
         path('add/',views.CommitmentCreate.as_view(), name='commitment-create'),
+        path('export/', views.CommitmentExport.as_view(), name='commitment-export'),
         path('<pk>/', include([
             path('', views.CommitmentDetail.as_view(), name='commitment-detail'),
             path('add-action/', views.CommitmentActionCreate.as_view(), name='commitment-action-create'),
             path('update/', views.CommitmentUpdate.as_view(), name='commitment-update'),
         ])),
-        
     ])),
     path('actions/', include([
         path('',views.ActionList.as_view(), name='action-list'),
         path('add/',views.ActionCreate.as_view(), name='action-create'),
+        path('export/',views.ActionExport.as_view(), name='action-export'),
         path('<pk>/', include([
             path('',views.ActionDetail.as_view(), name='action-detail'),
             path('update/', views.ActionUpdate.as_view(), name='action-update'),

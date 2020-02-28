@@ -1,3 +1,4 @@
+import csv
 import datetime
 
 from django.contrib.auth.models import User
@@ -76,7 +77,7 @@ class Commitment(models.Model):
 
     def __str__(self):
         return self.name
-        
+
     def get_absolute_url(self):
         return reverse('commitment-detail', kwargs={'pk':self.id})
 

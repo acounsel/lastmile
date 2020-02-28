@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>Commitment List</h1>
-<table class="table" data-sorting="true">
+<p><a href="{% url 'commitment-export' %}">Export</a></p>
+<table class="table mt-5" data-sorting="true">
   <thead>
     <tr>
       <th scope="col">Commitment</th>
