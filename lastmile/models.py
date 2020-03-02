@@ -93,6 +93,9 @@ class Commitment(models.Model):
                 commitment=self,
             )
 
+    def get_active_actions(self):
+        return self.action_set.filter(status=Action.ACTIVE)
+
     def is_numeric(self):
         try:
             goal_num = int(self.goal)

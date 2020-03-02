@@ -9,6 +9,7 @@
       <th scope="col">Target</th>
       <th scope="col">Current</th>
       <th scope="col">Status</th>
+      <th scope="col" data-breakpoints="all" data-title="Actions">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -19,6 +20,7 @@
       <td>{{ commitment.goal }}</td>
       <td>{{ commitment.progress_toward_goal }}</td>
       <td>{{ commitment.get_status_display }}</td>
+      <td>{{ commitment.get_active_actions }}</td>
     </tr>
     {% endfor %}
   </tbody>
