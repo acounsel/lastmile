@@ -19,8 +19,12 @@
        <td><a href="{{ commitment.category.get_absolute_url }}" class="{{ commitment.get_text_color }}">{{ commitment.category.name }}</a></td>
       <td>{{ commitment.goal }}</td>
       <td>{{ commitment.progress_toward_goal }}</td>
-      <td>{{ commitment.get_status_display }}</td>
-      <td>{{ commitment.get_active_actions }}</td>
+      <td>{{ commitment.get_status_display }} {% if commitment.get_status %}({{ commitment.get_status|title }}){% endif %}</td>
+      <td>
+        {% for action in commitment.get_active_actions %}
+        <p>{{ action.name }} &mdash; {{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</p>
+        {% endfor %}
+      </td>
     </tr>
     {% endfor %}
   </tbody>
