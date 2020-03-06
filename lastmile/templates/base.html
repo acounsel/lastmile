@@ -18,6 +18,31 @@
     <script type="text/javascript" src="{% static 'js/footable.min.js' %}"></script>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   </head>
+  <style>
+    html {
+      height: 100vh;
+    }
+    body {
+      min-height: 100vh;
+      background-color: #3AAFA9;
+    }
+    a {
+      color: #FFFFFF;
+    }
+    div.card {
+      background-color: #DEF2F1;
+    }
+    .bg-dark {
+      background-color: #17252A!important;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 50px;
+      font-weight: 600;
+      line-height: 60px;
+      color: #FEFFFF;
+    }
+  </style>
   <body>
     <header>
       {% include 'addins/navbar.html' %}

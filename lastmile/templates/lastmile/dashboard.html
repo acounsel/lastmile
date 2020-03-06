@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>Last Mile</h1>
-<table class="table" data-sorting="true">
-  <thead>
-    <tr>
-      <th scope="col">Commitment</th>
-      <th scope="col">Category</th>
-      <th scope="col">Target</th>
-      <th scope="col">Current</th>
-      <th scope="col">Status</th>
-      <th scope="col" data-breakpoints="all" data-title="Actions">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for commitment in commitment_list %}
-    <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
-      <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="pl-2 {{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
-       <td><a href="{{ commitment.category.get_absolute_url }}" class="{{ commitment.get_text_color }}">{{ commitment.category.name }}</a></td>
-      <td>{{ commitment.goal }}</td>
-      <td>{{ commitment.progress_toward_goal }}</td>
-      <td>{{ commitment.get_status_display }} {% if commitment.get_status %}({{ commitment.get_status|title }}){% endif %}</td>
-      <td>
-        {% for action in commitment.get_active_actions %}
-        <p>{{ action.name }} &mdash; {{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</p>
-        {% endfor %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="card mt-5">
+  <table class="table" data-sorting="true">
+    <thead>
+      <tr>
+        <th scope="col">Commitment</th>
+        <th scope="col">Category</th>
+        <th scope="col">Target</th>
+        <th scope="col">Current</th>
+        <th scope="col">Status</th>
+        <th scope="col" data-breakpoints="all" data-title="Actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for commitment in commitment_list %}
+      <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
+        <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="pl-2 {{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
+         <td><a href="{{ commitment.category.get_absolute_url }}" class="{{ commitment.get_text_color }}">{{ commitment.category.name }}</a></td>
+        <td>{{ commitment.goal }}</td>
+        <td>{{ commitment.progress_toward_goal }}</td>
+        <td>{{ commitment.get_status_display }} {% if commitment.get_status %}({{ commitment.get_status|title }}){% endif %}</td>
+        <td>
+          {% for action in commitment.get_active_actions %}
+          <p>{{ action.name }} &mdash; {{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</p>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 {% endblock %}
