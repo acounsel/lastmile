@@ -144,7 +144,7 @@ class Commitment(models.Model):
     
     def get_text_color(self):
         bg_color = self.get_status_color()
-        if bg_color in ['light', 'warning']:
+        if bg_color in ['light', 'warning', 'primary']:
             return 'text-dark'
         else:
             return 'text-white'
@@ -260,7 +260,7 @@ class Action(models.Model):
     
     def get_text_color(self):
         bg_color = self.get_status_color()
-        if bg_color in ['light', 'warning']:
+        if bg_color in ['light', 'warning', 'primary']:
             return 'text-dark'
         else:
             return 'text-white'

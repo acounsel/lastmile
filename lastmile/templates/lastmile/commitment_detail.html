@@ -2,58 +2,60 @@
 {% block body %}
 <h1>{{ commitment.name }}</h1>
 <p><a href="{% url 'commitment-update' pk=commitment.id %}">Edit</a></p>
-<h2><strong>Category:</strong> <a href="{{ commitment.category.get_absolute_url }}">{{ commitment.category.name }}</a></h2>
-<h3><strong>Status:</strong> {{ commitment.get_status_display }}</h3>
-<p><strong>Explanation:</strong> {{ commitment.status_description }}</p>
-<p class="pt-3">{{ commitment.description }}</p>
-{% if self.get_percent_progress %}{{ self.get_percent_progress }}% Progress{% endif %}<p></p>
-<div class="mt-5">
-  <h4>Actions</h4>
-  <a href="{% url 'commitment-action-create' pk=commitment.id %}">Add Action</a>
-  <table class="table" data-sorting="true">
-    <thead>
-      <tr>
-        <th scope="col">Action Item</th>
-        <th scope="col">Responsible Party</th>
-        <th scope="col">Expected Date</th>
-        <th scope="col">Completion Date</th>
-        <th scope="col">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for action in commitment.action_set.all %}
-      <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
-        <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
-        <td><a href="{% if action.responsible_party %}{% url 'actor-detail' pk=action.responsible_party.id %}{% endif %}" class="{{ action.get_text_color }}">{{ action.responsible_party }}</a></td>
-        <td>{{ action.expected_completion_date }}</td>
-        <td>{{ action.completion_date }}</td>
-        <td>{{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-<div class="mt-5">
-  <h4>History</h4>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Date</th>
-        <th scope="col">Type</th>
-        <th scope="col">Action</th>
-        <th scope="col">Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for update in commitment.update_set.all %}
-      <tr>
-        <th scope="row">{{ update.date_created }}</th>
-        <td>{{ update.get__type_display }}</td>
-        <td>{{ update.action }}</td>
-        <td>{{ update.description }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="card p-4 mt-5">
+  <h2><strong>Category:</strong> <a href="{{ commitment.category.get_absolute_url }}">{{ commitment.category.name }}</a></h2>
+  <h3><strong>Status:</strong> {{ commitment.get_status_display }}</h3>
+  <p><strong>Explanation:</strong> {{ commitment.status_description }}</p>
+  <p class="pt-3">{{ commitment.description }}</p>
+  {% if self.get_percent_progress %}{{ self.get_percent_progress }}% Progress{% endif %}<p></p>
+  <div class="mt-5">
+    <h4>Actions</h4>
+    <a href="{% url 'commitment-action-create' pk=commitment.id %}">Add Action</a>
+    <table class="table" data-sorting="true">
+      <thead>
+        <tr>
+          <th scope="col">Action Item</th>
+          <th scope="col">Responsible Party</th>
+          <th scope="col">Expected Date</th>
+          <th scope="col">Completion Date</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for action in commitment.action_set.all %}
+        <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
+          <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
+          <td><a href="{% if action.responsible_party %}{% url 'actor-detail' pk=action.responsible_party.id %}{% endif %}" class="{{ action.get_text_color }}">{{ action.responsible_party }}</a></td>
+          <td>{{ action.expected_completion_date }}</td>
+          <td>{{ action.completion_date }}</td>
+          <td>{{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-5">
+    <h4>History</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Type</th>
+          <th scope="col">Action</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for update in commitment.update_set.all %}
+        <tr>
+          <th scope="row">{{ update.date_created }}</th>
+          <td>{{ update.get__type_display }}</td>
+          <td>{{ update.action }}</td>
+          <td>{{ update.description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}
