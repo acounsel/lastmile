@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
-<h1>Commitment List</h1>
-<p><a href="{% url 'commitment-export' %}">Export</a></p>
+<div class="d-flex justify-content-between">
+  <h1>Commitment List</h1>
+  <h2><a href="{% url 'commitment-export' %}"><i class="fas fa-download pr-4"></i></a></h2>
+</div>
 <table class="table mt-5" data-sorting="true">
   <thead>
     <tr>

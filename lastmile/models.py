@@ -48,7 +48,7 @@ class Commitment(models.Model):
     COMPLETE = 'complete'
     FAILED = 'failed'
     STATUS_CHOICES = (
-        (PENDING, 'Pending'),
+        (PENDING, 'Not Started'),
         (ACTIVE, 'Active'),
         (COMPLETE, 'Complete'),
         (FAILED, 'Failed'),
@@ -188,7 +188,7 @@ class Action(models.Model):
     COMPLETE = 'complete'
     FAILED = 'failed'
     STATUS_CHOICES = (
-        (PENDING, 'Pending'),
+        (PENDING, 'Not Started'),
         (ACTIVE, 'Active'),
         (COMPLETE, 'Complete'),
         (FAILED, 'Failed'),
@@ -269,7 +269,24 @@ class Action(models.Model):
         if self.get_status() == 'overdue':
             return True
 
+class UpdateManager(models.Manager):
+
+    def add_delay(self, action, date):
+        delay = date - action.expected_completion_date
+        update = Update.objects.create(
+            description = '{0} Days Past Deadline - {1}'.format(
+                delay.days,
+                action.expected_completion_date
+            ),
+            _type=Update.DELAY,
+            commitment=action.commitment,
+            action=action,
+            actor=action.responsible_party,
+        )
+        return update
+
 class Update(models.Model):
+    objects = UpdateManager()
     # Delays refer to active actions that have passed their
     #  expected completion date
     DELAY = 'delay'

@@ -96,7 +96,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 try:
     from .local_settings import *

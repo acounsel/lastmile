@@ -15,7 +15,7 @@
   <tbody>
     {% for commitment in commitment_list %}
     <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
-      <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="{{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
+      <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="pl-2 {{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
        <td><a href="{{ commitment.category.get_absolute_url }}" class="{{ commitment.get_text_color }}">{{ commitment.category.name }}</a></td>
       <td>{{ commitment.goal }}</td>
       <td>{{ commitment.progress_toward_goal }}</td>

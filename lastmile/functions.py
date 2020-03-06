@@ -3,6 +3,8 @@ import datetime
 
 from django.http import StreamingHttpResponse
 
+from .models import Update
+
 class Echo:
     """An object that implements just the write method
     of the file-like interface.
@@ -47,3 +49,15 @@ def get_row(field_list, instance):
             print(error)
             pass
     return row
+
+def check_action_dates(actions):
+    iterator = 0
+    today = datetime.date.today()
+    for action in actions:
+        if action.expected_completion_date < today:
+            iterator += 1
+            print('DELAY: {}'.format(action))
+            Update.objects.add_delay(action, today)
+    return actions.count(), iterator
+
+

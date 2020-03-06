@@ -4,6 +4,7 @@
     <thead>
       <tr>
         <th scope="col">Date</th>
+        <th scope="col">Action</th>
         <th scope="col">Type</th>
         <th scope="col">Description</th>
       </tr>
@@ -12,6 +13,7 @@
       {% for update in action.update_set.all %}
       <tr>
         <th scope="row">{{ update.date_created }}</th>
+        <td>{{ update.action }}</td>
         <td>{{ update.get__type_display }}</td>
         <td>{{ update.description }}</td>
       </tr>
