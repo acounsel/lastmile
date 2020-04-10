@@ -205,7 +205,9 @@ class Action(models.Model):
         blank=True, null=True)
     responsible_party = models.ForeignKey(Actor,
         on_delete=models.SET_NULL,
-        blank=True, null=True)
+        blank=True, null=True, related_name='deprecated')
+    responsible_parties = models.ManyToManyField(Actor,
+        blank=True)
     expected_completion_date = models.DateField(
         blank=True, null=True)
     completion_date = models.DateField(

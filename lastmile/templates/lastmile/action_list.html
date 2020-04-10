@@ -11,7 +11,7 @@
     <tr>
       <th scope="col">Action Item</th>
       <th scope="col">Commitment</th>
-      <th scope="col">Responsible Party</th>
+      <th scope="col">Responsible Parties</th>
       <th scope="col">Expected Date</th>
       <th scope="col">Completion Date</th>
       <th scope="col">Status</th>
@@ -22,7 +22,7 @@
     <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
       <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
       <td><a href="{{ action.commitment.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.commitment }}</a></td>
-      <td><a href="{{ action.responsible_party.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.responsible_party }}</a></td>
+      <td><a href="{{ action.responsible_party.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.responsible_parties.all|join:", " }}</a></td>
       <td>{{ action.expected_completion_date }}</td>
       <td>{{ action.completion_date }}</td>
       <td>{{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</td>

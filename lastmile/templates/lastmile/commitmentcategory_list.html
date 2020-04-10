@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>Commitment Categories</h1>
-<table class="table">
+<table class="table" data-sorting="true">
   <thead>
     <tr>
       <th scope="col">Name</th>
@@ -14,11 +14,11 @@
   <tbody>
     {% for category in commitmentcategory_list %}
     <tr>
-      <th scope="row"><a href="{% url 'commitment-category-detail' slug=category.slug %}">{{ category.name }}</a></th>
-      <td>{{ category.commitment_set.count }}</td>
-      <td>{{ category.get_actions }}</td>
-      <td>{{ category.get_current_actions }}</td>
-      <td>{{ category.get_delayed_actions }}</td>
+      <th scope="row"><a  class="text-dark" href="{% url 'commitment-category-detail' slug=category.slug %}">{{ category.name }}</a></th>
+      <td class="text-dark">{{ category.commitment_set.count }}</td>
+      <td class="text-dark">{{ category.get_actions }}</td>
+      <td class="text-dark">{{ category.get_current_actions }}</td>
+      <td class="text-dark">{{ category.get_delayed_actions }}</td>
     </tr>
     {% endfor %}
   </tbody>

@@ -25,7 +25,11 @@
         {% for action in commitment.action_set.all %}
         <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
           <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
-          <td><a href="{% if action.responsible_party %}{% url 'actor-detail' pk=action.responsible_party.id %}{% endif %}" class="{{ action.get_text_color }}">{{ action.responsible_party }}</a></td>
+          <td>
+            {% for party in action.responsible_parties.all %}
+            <a href="{% url 'actor-detail' pk=party.id %}" class="{{ action.get_text_color }}">{{ party }} </a>
+            {% endfor %}
+          </td>
           <td>{{ action.expected_completion_date }}</td>
           <td>{{ action.completion_date }}</td>
           <td>{{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</td>

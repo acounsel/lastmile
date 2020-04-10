@@ -85,7 +85,7 @@ class ActionView(BaseView):
     model = Action
     fields = ['name', 'description', 'status',
         'status_description','commitment',
-        'responsible_party', 'expected_completion_date',
+        'responsible_parties', 'expected_completion_date',
         'completion_date']
 
 class ActionList(ActionView, ListView):
