@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-<h1>Add Actor</h1>
+<h1>{% if form.instance %}Edit{% else %}Add{% endif %} Actor</h1>
 {% include 'addins/form.html' %}
 {% endblock %}

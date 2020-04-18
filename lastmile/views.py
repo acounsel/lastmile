@@ -1,9 +1,12 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
 from django.views.generic import View, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
-from django.urls import reverse
-
+from django.views.generic.edit import DeleteView
+from django.urls import reverse, reverse_lazy
+    
 from .functions import get_export_response
 from .models import Action, Actor, Commitment
 from .models import CommitmentCategory, Update
@@ -17,13 +20,30 @@ class ExportMixin():
             self.get_queryset())
         return response
 
+class StaffMixin(UserPassesTestMixin):
+    login_url = '/login/'
+
+    def test_func(self):
+        if self.request.user.is_authenticated:
+            return self.request.user.is_staff
+        else:
+            return False
+
 class BaseView(LoginRequiredMixin, View):
     login_url = '/login/'
 
 class CommitmentCategoryView(BaseView):
     model = CommitmentCategory
     fields = ['name', 'description']
-    
+
+class DeleteView(StaffMixin, DeleteView):
+    success_url = reverse_lazy('dashboard')
+    template_name = 'lastmile/confirm_delete.html'
+      
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Succesfully Deleted')
+        return super().delete(request, *args, **kwargs)
+
 class CommitmentCategoryList(
     CommitmentCategoryView, ListView):
     pass
@@ -38,6 +58,10 @@ class CommitmentCategoryCreate(
 
 class CommitmentCategoryUpdate(
     CommitmentCategoryView, UpdateView):
+    pass
+
+class CommitmentCategoryDelete(
+    CommitmentCategoryView, DeleteView):
     pass
 
 class CommitmentView(BaseView):
@@ -78,6 +102,9 @@ class CategoryCommitmentCreate(
 class CommitmentUpdate(CommitmentView, UpdateView):
     pass
 
+class CommitmentDelete(CommitmentView, DeleteView):
+    pass
+
 class Dashboard(CommitmentList):
     template_name = 'lastmile/dashboard.html'
 
@@ -109,6 +136,9 @@ class ActionCreate(ActionView, CreateView):
 class ActionUpdate(ActionView, UpdateView):
     pass
 
+class ActionDelete(ActionView, DeleteView):
+    pass
+
 class CommitmentActionCreate(ActionCreate):
     
     def get_initial(self):
@@ -137,4 +167,7 @@ class ActorCreate(ActorView, CreateView):
     pass
 
 class ActorUpdate(ActorView, UpdateView):
+    pass
+
+class ActorDelete(ActorView, DeleteView):
     pass

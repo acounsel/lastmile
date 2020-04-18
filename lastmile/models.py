@@ -42,6 +42,10 @@ class CommitmentCategory(models.Model):
         return reverse('commitment-category-detail',
             kwargs={'slug':self.slug})
 
+    def get_delete_url(self):
+        return reverse('commitment-category-delete',
+            kwargs={'slug':self.slug})
+
 class Commitment(models.Model):
     PENDING = 'pending'
     ACTIVE = 'active'
@@ -80,6 +84,9 @@ class Commitment(models.Model):
 
     def get_absolute_url(self):
         return reverse('commitment-detail', kwargs={'pk':self.id})
+
+    def get_delete_url(self):
+        return reverse('commitment-delete', kwargs={'pk':self.id})
 
     def save(self, *args, **kwargs):
         new = False
@@ -168,6 +175,9 @@ class Actor(models.Model):
     def get_absolute_url(self):
         return reverse('actor-detail', kwargs={'pk':self.id})
 
+    def get_delete_url(self):
+        return reverse('actor-delete', kwargs={'pk':self.id})
+
     def get_completed_actions(self):
         return self.action_set.filter(status=Action.COMPLETE)
 
@@ -218,6 +228,9 @@ class Action(models.Model):
 
     def get_absolute_url(self):
         return reverse('action-detail', kwargs={'pk':self.id})
+
+    def get_delete_url(self):
+        return reverse('actor-delete', kwargs={'pk':self.id})
 
     def save(self, *args, **kwargs):
         new = False

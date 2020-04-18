@@ -4,4 +4,7 @@
   {{ form|crispy }}
   {{ form.errors  }}
   <input type="submit" value="Submit" class="btn btn-primary px-4">
+  {% if form.instance and request.user.is_staff %}
+  <a class="btn btn-danger ml-3" href="{{ form.instance.get_delete_url }}">Delete</a>
+  {% endif %}
 </form>

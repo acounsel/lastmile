@@ -57,7 +57,33 @@
     .bg-success {
       background-color: #2B7A78 !important;
     }
-
+    .Messages {
+      position: relative;
+      width: 100%;
+      z-index: 100000;
+    }
+    .Message {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 500px;
+      margin-left: -250px;
+      padding: 10px;
+      text-align: center;
+      border-radius: 0 0 4px 4px
+    }
+      .Messages .error {
+        color: #fff;
+        background-color: #F78181;
+      }
+      .Messages .success {
+        color: #FFFFFF;
+        background-color: #3DBD89;
+        cursor: pointer;
+      }
+      .Messages.hide {
+        display: none;
+      }
     h1 {
       font-family: 'Montserrat', sans-serif;
       font-size: 50px;
@@ -71,6 +97,7 @@
   </style>
   <body>
     <header>
+      {% include 'addins/messages.html' %}
       {% include 'addins/navbar.html' %}
     </header>
     <main>
@@ -82,5 +109,13 @@
         $( '.table' ).footable();
       </script>
     </main>
+    <script type="text/javascript">
+      setTimeout(function() {
+        $('.Message').fadeOut('slow');
+      }, 3000);
+      $('.Message').click(function() {
+        $('.Message').fadeOut("slow");
+      });
+    </script>
   </body>
 </html>

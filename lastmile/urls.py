@@ -10,7 +10,8 @@ urlpatterns = [
         path('<slug>/', include([
             path('', views.CommitmentCategoryDetail.as_view(), name='commitment-category-detail'),
             path('add-commitment/', views.CategoryCommitmentCreate.as_view(), name='category-commitment-create'),
-            path('update', views.CommitmentCategoryUpdate.as_view(), name='commitment-category-update'),
+            path('update/', views.CommitmentCategoryUpdate.as_view(), name='commitment-category-update'),
+            path('delete/', views.CommitmentCategoryDelete.as_view(), name='commitment-category-delete'),
         ])),
     ])),
     path('commitments/', include([
@@ -21,6 +22,7 @@ urlpatterns = [
             path('', views.CommitmentDetail.as_view(), name='commitment-detail'),
             path('add-action/', views.CommitmentActionCreate.as_view(), name='commitment-action-create'),
             path('update/', views.CommitmentUpdate.as_view(), name='commitment-update'),
+            path('delete/', views.CommitmentDelete.as_view(), name='commitment-delete'),
         ])),
     ])),
     path('actions/', include([
@@ -30,6 +32,7 @@ urlpatterns = [
         path('<pk>/', include([
             path('',views.ActionDetail.as_view(), name='action-detail'),
             path('update/', views.ActionUpdate.as_view(), name='action-update'),
+            path('delete/', views.ActionDelete.as_view(), name='action-delete'),
         ])),
         path('status/<status>/',views.ActionList.as_view(), name='action-list-by-status'),
     ])),
@@ -39,6 +42,7 @@ urlpatterns = [
         path('<pk>/', include([
             path('',views.ActorDetail.as_view(), name='actor-detail'),
             path('update/', views.ActorUpdate.as_view(), name='actor-update'),
+            path('delete/', views.ActorDelete.as_view(), name='actor-delete'),
         ])),
     ])),
 ]
