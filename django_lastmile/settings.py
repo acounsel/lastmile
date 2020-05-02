@@ -106,4 +106,4 @@ except Exception as e:
     pass
 
 # Activate Django-Heroku.
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
