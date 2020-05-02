@@ -232,7 +232,7 @@ class Action(models.Model):
         return reverse('action-detail', kwargs={'pk':self.id})
 
     def get_delete_url(self):
-        return reverse('actor-delete', kwargs={'pk':self.id})
+        return reverse('action-delete', kwargs={'pk':self.id})
 
     def save(self, *args, **kwargs):
         new = False
