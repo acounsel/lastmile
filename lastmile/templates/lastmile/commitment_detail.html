@@ -61,5 +61,10 @@
       </tbody>
     </table>
   </div>
+  {% if commitment.attachment_set %}
+    <div class="mt-5">
+      {% include 'addins/attachment_form.html' with attachment_list=commitment.attachment_set.all %}
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

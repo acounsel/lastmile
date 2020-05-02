@@ -1,5 +1,5 @@
 import os
-import django_heroku
+# import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'lastmile',
     'django_extensions',
     'crispy_forms',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -105,4 +106,4 @@ except Exception as e:
     pass
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

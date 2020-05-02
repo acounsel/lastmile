@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import DeleteView
@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from .functions import get_export_response
 from .models import Action, Actor, Commitment
 from .models import CommitmentCategory, Update
+from .models import Attachment
 
 class ExportMixin():
 
@@ -28,6 +29,23 @@ class StaffMixin(UserPassesTestMixin):
             return self.request.user.is_staff
         else:
             return False
+
+class AttachmentMixin():
+
+    def post(self, request, **kwargs):
+        user = request.user
+        attachment = Attachment.objects.create(
+            name=request.POST.get('name'), 
+            file=request.FILES.get('file'),
+            description=request.POST.get('description'),
+            uploaded_by=user,
+        )
+        field = self.model._meta.verbose_name
+        value = self.get_object()
+        setattr(attachment, field, value)
+        attachment.save()
+        messages.success(request, 'Attachment Added')
+        return redirect(value.get_absolute_url())
 
 class BaseView(LoginRequiredMixin, View):
     login_url = '/login/'
@@ -78,7 +96,7 @@ class CommitmentList(CommitmentView, ListView):
 class CommitmentExport(ExportMixin, CommitmentList):
     pass
         
-class CommitmentDetail(CommitmentView, DetailView):
+class CommitmentDetail(AttachmentMixin, CommitmentView, DetailView):
     pass
 
 class CommitmentCreate(CommitmentView, CreateView):
@@ -127,7 +145,7 @@ class ActionList(ActionView, ListView):
 class ActionExport(ExportMixin, ActionList):
     pass
 
-class ActionDetail(ActionView, DetailView):
+class ActionDetail(ActionView, DetailView, AttachmentMixin):
     pass
 
 class ActionCreate(ActionView, CreateView):
@@ -170,4 +188,38 @@ class ActorUpdate(ActorView, UpdateView):
     pass
 
 class ActorDelete(ActorView, DeleteView):
+    pass
+
+class AttachmentView(BaseView):
+    model = Attachment
+    fields = ['name', 'file', 'description', 'commitment', 
+        'action']
+
+    def get_success_url(self):
+        attachment = self.get_object()
+        if attachment.commitment:
+            return reverse('commitment-detail',
+                kwargs={'pk':attachment.commitment.id})
+        elif attachment.action:
+            return reverse('action-detail', 
+                kwargs={'pk':attachment.action.id})
+        else:
+            return reverse('dashboard')
+
+class AttachmentList(AttachmentView, ListView):
+    pass
+
+class AttachmentCreate(AttachmentView, CreateView):
+    
+    def form_valid(self, form):
+        form.instance.added_by = self.request.user
+        return super().form_valid(form)
+
+class AttachmentDetail(AttachmentView, DetailView):
+    pass
+
+class AttachmentUpdate(AttachmentView, UpdateView):
+    pass
+
+class AttachmentDelete(AttachmentView, DeleteView):
     pass

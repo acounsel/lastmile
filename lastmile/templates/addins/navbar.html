@@ -27,13 +27,22 @@
           <a class="dropdown-item" href="{% url 'action-create' %}">Add Action</a>
         </div>
       </li>
-      <li class="nav-item dropdown mr-auto">
+      <li class="nav-item dropdown mr-3">
         <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Actors
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'actor-list' %}">View Actors</a>
           <a class="dropdown-item" href="{% url 'actor-create' %}">Add Actor</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown mr-auto">
+        <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Attachments
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="{% url 'attachment-list' %}">View Attachments</a>
+          <a class="dropdown-item" href="{% url 'attachment-create' %}">Add Attachment</a>
         </div>
       </li>
      <!--  <li class="nav-item dropdown mr-auto">
@@ -59,7 +68,6 @@
         {% else %}
         <a class="nav-link text-white" href="{% url 'login' %}">Login</a>
         {% endif %}
-        
       </li>
     </ul>
     

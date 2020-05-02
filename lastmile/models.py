@@ -8,6 +8,8 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
+from django_lastmile.storage_backends import PrivateMediaStorage
+from django_lastmile.storage_backends import PublicMediaStorage
 
 class Agreement(models.Model):
     
@@ -415,3 +417,20 @@ class Update(models.Model):
         except Exception as error:
             print(error)
             pass
+
+class Attachment(models.Model):
+
+    name = models.CharField(max_length=255)
+    file = models.FileField(storage=PrivateMediaStorage(),
+        upload_to='files/', blank=True, null=True)
+    description = models.TextField(blank=True)
+    commitment = models.ForeignKey(Commitment, models.SET_NULL, blank=True, null=True)
+    action = models.ForeignKey(Action, on_delete=models.SET_NULL, blank=True, null=True)
+    date_added = models.DateField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_delete_url(self):
+        return reverse('attachment-delete', kwargs={'pk':self.id})

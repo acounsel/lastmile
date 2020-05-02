@@ -45,4 +45,13 @@ urlpatterns = [
             path('delete/', views.ActorDelete.as_view(), name='actor-delete'),
         ])),
     ])),
+    path('attachments/', include([
+        path('',views.AttachmentList.as_view(), name='attachment-list'),
+        path('add/', views.AttachmentCreate.as_view(), name='attachment-create'),
+        path('<pk>/', include([
+            path('', views.AttachmentDetail.as_view(), name='attachment-detail'),
+            path('update/', views.AttachmentUpdate.as_view(), name='attachment-update'),
+            path('delete/', views.AttachmentDelete.as_view(), name='attachment-delete'),
+        ])),
+    ])),
 ]

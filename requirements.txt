@@ -3,3 +3,5 @@ django-crispy-forms
 django-extensions
 django-heroku
 gunicorn
+Boto3
+django-storages

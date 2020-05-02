@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Attachments</h1>
+<div class="card p-4 mt-5">
+    <div class="row">
+        {% for attachment in attachment_list %}
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <div class="card">
+                    <a href="{% url 'attachment-detail' pk=attachment.id %}"><img class="img-fluid" src="{{ attachment.file.url }}"></a>
+                    <div class="card-header">{{ attachment.name }}</div>
+                </div>
+
+            </div>
+<!--             <a href="{% url 'attachment-detail' pk=attachment.id %}">
+                <div class="card col-lg-3 col-md-4 col-xs-6 thumb">
+                    <img class="img-fluid" src="{{ attachment.file.url }}"></a>
+                    <div class="card-body">
+                      <h5 class="card-title">{{ attachment.name }}</h5>
+                      <p class="card-text ">{{ attachment.description }}</p>
+                    </div>
+                </div>
+            </a> -->
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
