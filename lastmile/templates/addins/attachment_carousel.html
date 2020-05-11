@@ -1,0 +1,128 @@
+<style>
+.carousel-control-prev {
+    justify-content: flex-start;
+    margin-left: -15px;
+    opacity:1;
+}
+.carousel-control-next {
+    justify-content: flex-end;
+    margin-right: -15px;
+    opacity:1;
+}
+
+.carousel-inner .carousel-item.active,
+.carousel-inner .carousel-item-next,
+.carousel-inner .carousel-item-prev {
+  display: flex;
+}
+.fa-chevron-right, 
+.fa-chevron-left {
+  color: #17a2b8;
+}
+
+.carousel-inner .carousel-item-right.active,
+.carousel-inner .carousel-item-next {
+  transform: translateX(25%);
+}
+
+.carousel-inner .carousel-item-left.active, 
+.carousel-inner .carousel-item-prev {
+  transform: translateX(-25%);
+}
+  
+.carousel-inner .carousel-item-right,
+.carousel-inner .carousel-item-left{ 
+  transform: translateX(0); 
+}
+</style>
+
+{% block body %}
+<div class="container text-center my-3">
+  <div class="row mx-auto my-auto">
+      <div id="attachment-carousel" class="carousel slide w-100" data-ride="carousel">
+          <div class="carousel-inner w-100" role="listbox">
+            {% for attachment in attachment_list %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="col-12 col-sm-3">
+                  <div class="card mb-2">
+                    <img width="900" height="1200" class="d-block img-fluid card-img-top" src="{{ attachment.file.url }}" alt="{{ attachment.name }}">
+                    <div class="card-body">
+                      <h4 class="card-title">{{ attachment.name }}</h4>
+                      <p class="card-text">{{ attachment.description }}</p>
+                      <a href="{% url 'attachment-detail' pk=attachment.id %}"><button type="button" class="btn btn-info btn-sm btn-block">View</button></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <a class="carousel-control-prev" href="#attachment-carousel" role="button" data-slide="prev">
+              <span class="fas fa-chevron-left fa-2x" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#attachment-carousel" role="button" data-slide="next">
+              <span class="fas fa-chevron-right fa-2x" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+          </a>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+<script>
+  var totalItems = $('.carousel-item').length;
+  if (totalItems > 4) {
+    $('#attachment-carousel').carousel({ 
+        interval: 6000             
+      });
+      //alert();
+      $('.carousel .carousel-item').each(function(){
+        var next = $(this).next();
+        if (!next.length) {
+          next = $(this).siblings(':first');
+        }
+        next.children(':first-child').clone().appendTo($(this));
+        for (var i=0;i<4;i++) {
+          next=next.next();
+          if (!next.length) {
+            next = $(this).siblings(':first');
+          }
+          
+          next.children(':first-child').clone().appendTo($(this));
+        }
+      });
+    }
+    else {
+      $('#attachment-carousel').carousel({ 
+        interval: false    
+      });
+      (function(){
+      $('.carousel .carousel-item').each(function(){
+        var itemToClone = $(this);
+        for (var i=0;i<totalItems-1;i++) {
+          itemToClone = itemToClone.next();     
+          // wrap around if at end of item collection
+          if (!itemToClone.length) {
+            itemToClone = $(this).siblings(':first');
+          }             
+          // grab item, clone, add marker class, add to collection
+          itemToClone.children(':first-child').clone()
+            .addClass("cloneditem-"+(i))
+            .appendTo($(this)); 
+            //listener for after slide
+            jQuery('.carousel').on('slid.bs.carousel', function(){
+            //Each slide has a .item class to it, you can get the total number of slides like this
+                var totalItems = jQuery('.carousel .carousel-item').length;
+                //find current slide number
+                var currentIndex = jQuery('.carousel .carousel-item div.active').index() + 1;
+                //if slide number is last then stop carousel
+              if(totalItems == currentIndex){
+                clearInterval(jQuery('.carousel .carousel-item').data('bs.carousel').interval);
+              } // end of if
+
+            });
+        }
+      });
+    }()); 
+    }          
+</script>

@@ -39,6 +39,11 @@
     </table>
   </div>
   <div class="mt-5">
+    <h4>Attachments</h4>
+    {% include 'addins/attachment_form.html' with attachment_list=commitment.attachment_set.all %}
+    {% include 'addins/attachment_carousel.html' with attachment_list=commitment.attachment_set.all %}
+  </div>
+  <div class="mt-5">
     <h4>History</h4>
     <table class="table">
       <thead>
@@ -61,10 +66,5 @@
       </tbody>
     </table>
   </div>
-  {% if commitment.attachment_set %}
-    <div class="mt-5">
-      {% include 'addins/attachment_form.html' with attachment_list=commitment.attachment_set.all %}
-    </div>
-  {% endif %}
 </div>
 {% endblock %}

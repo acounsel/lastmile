@@ -1,38 +1,6 @@
 {% load crispy_forms_tags %}
-<style>
-.carousel-control.left .glyphicon {
-    left: 0;
-    margin-left: 0;
-}
-.carousel-control.right .glyphicon {
-    right: 0;
-    margin-right: 0;
-}
-
-.carousel-inner .carousel-item.active,
-.carousel-inner .carousel-item-next,
-.carousel-inner .carousel-item-prev {
-  display: flex;
-}
-
-.carousel-inner .carousel-item-right.active,
-.carousel-inner .carousel-item-next {
-  transform: translateX(25%);
-}
-
-.carousel-inner .carousel-item-left.active, 
-.carousel-inner .carousel-item-prev {
-  transform: translateX(-25%);
-}
-  
-.carousel-inner .carousel-item-right,
-.carousel-inner .carousel-item-left{ 
-  transform: translateX(0); 
-}
-</style>
 
 {% block body %}
-<h4>Attachments</h4>
 <h5 class="w-50">Add Attachment</h5>
 <form method="POST" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
@@ -45,7 +13,7 @@
       <label for="attachment_file">File</label>
       <div class="custom-file">
         <input id="attachment_file" class="custom-file-input" type="file" name="file">
-        <label for="attachment_file" class="custom-file-label">Choose File</label>
+        <label for="attachment_file" class="custom-file-label text-truncate">Choose File</label>
       </div>
     </div>
   </div>
@@ -57,67 +25,14 @@
   </div>
   <input type="submit" value="Submit" class="btn btn-primary px-4">
 </form>
-<div class="container text-center my-3">
-  <div class="row mx-auto my-auto">
-      <div id="attachment-carousel" class="carousel slide w-100" data-ride="carousel">
-          <div class="carousel-inner w-100" role="listbox">
-            {% for attachment in attachment_list %}
-              <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="col-12 col-sm-3">
-                  <div class="card mb-2">
-                    <img width="900" height="1200" class="d-block img-fluid card-img-top" src="{{ attachment.file.url }}" alt="{{ attachment.name }}">
-                    <div class="card-body">
-                      <h4 class="card-title">{{ attachment.name }}</h4>
-                      <p class="card-text">{{ attachment.description }}</p>
-                      <a href="{% url 'attachment-detail' pk=attachment.id %}"><button type="button" class="btn btn-info btn-sm btn-block">View</button></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-          <a class="carousel-control-prev" href="#attachment-carousel" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#attachment-carousel" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-          </a>
-      </div>
-  </div>
-</div>
 {% endblock %}
 
 <script>
   $('#attachment_file').on('change',function(){
-    console.log($(this).val())
       //get the file name
-      var fileName = $(this).val();
+      var fileString = $(this).val();
+      fileName = fileString.replace("C:\\fakepath\\", "");
       //replace the "Choose a file" label
       $(this).next('.custom-file-label').html(fileName);
   })
-</script>
-
-<script>
-  $('#attachment-carousel').carousel({
-    interval :5000
-  })
-
-  $('.carousel .carousel-item').each(function(){
-      var next = $(this).next();
-      if (!next.length) {
-      next = $(this).siblings(':first');
-      }
-      next.children(':first-child').clone().appendTo($(this));
-      
-      for (var i=0;i<3;i++) {
-          next=next.next();
-          if (!next.length) {
-            next = $(this).siblings(':first');
-          }
-          
-          next.children(':first-child').clone().appendTo($(this));
-        }
-  });
 </script>

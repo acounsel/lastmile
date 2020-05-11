@@ -95,6 +95,7 @@ class Commitment(models.Model):
         if not self.id:
             new = True
         super(Commitment, self).save(*args, **kwargs)
+        print('Me: {}'.format(self))
         if new:
             update = Update.objects.create(
                 description='Commitment Added',
@@ -286,6 +287,36 @@ class Action(models.Model):
         if self.get_status() == 'overdue':
             return True
 
+class Attachment(models.Model):
+
+    name = models.CharField(max_length=255)
+    file = models.FileField(storage=PrivateMediaStorage(),
+        upload_to='files/', blank=True, null=True)
+    description = models.TextField(blank=True)
+    commitment = models.ForeignKey(Commitment, models.SET_NULL, blank=True, null=True)
+    action = models.ForeignKey(Action, on_delete=models.SET_NULL, blank=True, null=True)
+    date_added = models.DateField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_delete_url(self):
+        return reverse('attachment-delete', kwargs={'pk':self.id})
+
+    def save(self, *args, **kwargs):
+        new = False
+        if not self.id:
+            new = True
+        super(Attachment, self).save(*args, **kwargs)
+        if new:
+            update = Update.objects.create(
+                description='Attachment Added',
+                _type=Update.OTHER,
+                commitment=self.commitment,
+                action=self.action,
+            )
+
 class UpdateManager(models.Manager):
 
     def add_delay(self, action, date):
@@ -371,7 +402,6 @@ class Update(models.Model):
         except sender.DoesNotExist:
             pass
         else:
-            print('update_obj')
             for field in sender._meta.get_fields():
                 Update.save_revision(
                     field, obj, instance, 'commitment')
@@ -389,7 +419,38 @@ class Update(models.Model):
                 update = Update.save_revision(
                     field, obj, instance, 'action')
                 if update:
+                    print('two times the charm')
                     update.add_commitment()
+
+    @receiver(pre_save, sender=Attachment)
+    def save_attachment(sender, instance, **kwargs):
+        try:
+            obj = sender.objects.get(pk=instance.pk)
+        except sender.DoesNotExist:
+            pass
+        else:
+            for field in ('file', 'description', 'commitment', 'action'):
+                update = Update.save_attachment_revision(
+                    field, obj, instance)
+
+    def save_attachment_revision(field, obj, instance):
+        try:
+            old = getattr(obj, field.name)
+            new = getattr(instance, field.name)
+            if old != new:
+                update = Update.objects.create(
+                    description='Attachment {0} changed from {1} to {2}' \
+                    .format(field.name, old, new),
+                    _type=Update.OTHER,
+
+                )
+                setattr(update, 'action', instance.action)
+                setattr(update, 'commitment', instance.commitment)
+                update.save()
+                return update
+        except Exception as error:
+            print(error)
+            pass
 
     def save_addition(instance, model_name):
         update = Update.objects.create(
@@ -417,20 +478,3 @@ class Update(models.Model):
         except Exception as error:
             print(error)
             pass
-
-class Attachment(models.Model):
-
-    name = models.CharField(max_length=255)
-    file = models.FileField(storage=PrivateMediaStorage(),
-        upload_to='files/', blank=True, null=True)
-    description = models.TextField(blank=True)
-    commitment = models.ForeignKey(Commitment, models.SET_NULL, blank=True, null=True)
-    action = models.ForeignKey(Action, on_delete=models.SET_NULL, blank=True, null=True)
-    date_added = models.DateField(auto_now_add=True)
-    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return self.name
-
-    def get_delete_url(self):
-        return reverse('attachment-delete', kwargs={'pk':self.id})
