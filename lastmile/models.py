@@ -440,7 +440,7 @@ class Update(models.Model):
                 update = Update.objects.create(
                     _type=Update.OTHER,
                 )
-                update.description = Update.get_description_string(old, new, field)
+                update.description = Update.get_description_string(instance, old, new, field)
                 setattr(update, 'action', instance.action)
                 setattr(update, 'commitment', instance.commitment)
                 update.save()
@@ -449,15 +449,15 @@ class Update(models.Model):
             print(error)
             pass
 
-    def get_description_string(old, new, field):
+    def get_description_string(instance, old, new, field):
         if old == None or old == '':
             if field == 'commitment' or field == 'action':
-                description = 'added'
+                description = '{0} Added by {1}'.format(instance.name, instance.uploaded_by)
             else:
-                description = '{} added'.format(field)
+                description = '{0} {1} Added by {2}'.format(instance.name, field, instance.uploaded_by)
         elif old != None or old != '':
-            description = '{0} changed from {1} to {2}'.format(field, old, new)
-        return 'Attachment {}'.format(description)
+            description = '{0} {1} changed from {2} to {3}'.format(instance.name, field, old, new)
+        return 'Attachment: {}'.format(description)
 
     def save_addition(instance, model_name):
         update = Update.objects.create(
