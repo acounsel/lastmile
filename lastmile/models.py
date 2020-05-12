@@ -419,7 +419,6 @@ class Update(models.Model):
                 update = Update.save_revision(
                     field, obj, instance, 'action')
                 if update:
-                    print('two times the charm')
                     update.add_commitment()
 
     @receiver(pre_save, sender=Attachment)
@@ -435,15 +434,13 @@ class Update(models.Model):
 
     def save_attachment_revision(field, obj, instance):
         try:
-            old = getattr(obj, field.name)
-            new = getattr(instance, field.name)
+            old = getattr(obj, field)
+            new = getattr(instance, field)
             if old != new:
                 update = Update.objects.create(
-                    description='Attachment {0} changed from {1} to {2}' \
-                    .format(field.name, old, new),
                     _type=Update.OTHER,
-
                 )
+                update.description = Update.get_description_string(old, new, field)
                 setattr(update, 'action', instance.action)
                 setattr(update, 'commitment', instance.commitment)
                 update.save()
@@ -451,6 +448,16 @@ class Update(models.Model):
         except Exception as error:
             print(error)
             pass
+
+    def get_description_string(old, new, field):
+        if old == None or old == '':
+            if field == 'commitment' or field == 'action':
+                description = 'added'
+            else:
+                description = '{} added'.format(field)
+        elif old != None or old != '':
+            description = '{0} changed from {1} to {2}'.format(field, old, new)
+        return 'Attachment {}'.format(description)
 
     def save_addition(instance, model_name):
         update = Update.objects.create(
