@@ -433,21 +433,17 @@ class Update(models.Model):
                     field, obj, instance)
 
     def save_attachment_revision(field, obj, instance):
-        try:
-            old = getattr(obj, field)
-            new = getattr(instance, field)
-            if old != new:
-                update = Update.objects.create(
-                    _type=Update.OTHER,
-                )
-                update.description = Update.get_description_string(instance, old, new, field)
-                setattr(update, 'action', instance.action)
-                setattr(update, 'commitment', instance.commitment)
-                update.save()
-                return update
-        except Exception as error:
-            print(error)
-            pass
+        old = getattr(obj, field)
+        new = getattr(instance, field)
+        if old != new:
+            update = Update.objects.create(
+                _type=Update.OTHER,
+            )
+            update.description = Update.get_description_string(instance, old, new, field)
+            setattr(update, 'action', instance.action)
+            setattr(update, 'commitment', instance.commitment)
+            update.save()
+            return update
 
     def get_description_string(instance, old, new, field):
         if old == None or old == '':
