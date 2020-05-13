@@ -269,7 +269,7 @@ class AttachmentView(BaseAgreementView):
         queryset = super(
             AttachmentView, self).get_queryset()
         agreements = self.request.user.agreement_set.all()
-        return queryset.filter(agreement__in=agreements)
+        return queryset.filter(commitment__agreement__in=agreements)
 
     def get_success_url(self):
         attachment = self.get_object()

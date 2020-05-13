@@ -372,10 +372,15 @@ class Attachment(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('attachment-detail', kwargs={
+            'pk':self.id,
+            'agreement':self.commitment.agreement.slug})
+
     def get_delete_url(self):
         return reverse('attachment-delete', kwargs={
             'pk':self.id,
-            'agreement':self.agreement.slug})
+            'agreement':self.commitment.agreement.slug})
 
     def save(self, *args, **kwargs):
         new = False
