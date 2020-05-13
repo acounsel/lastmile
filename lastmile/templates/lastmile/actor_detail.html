@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>{{ actor.name }}</h1>
-<p><a href="{% url 'actor-update' pk=actor.id %}">Edit</a></p>
+<p><a href="{% url 'actor-update' pk=actor.id agreement=agreement.slug %}">Edit</a></p>
 <div class="mt-5">
   <h4>Actions</h4>
   <table class="table">

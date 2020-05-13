@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>Last Mile</h1>
-{% for agreement in request.user.agreement_set.all %}
 <h2>{{ agreement.name }}</h2>
 <div class="card mt-5">
   <table class="table" data-sorting="true">
@@ -33,5 +32,4 @@
     </tbody>
   </table>
 </div>
-{% endfor %}
 {% endblock %}
