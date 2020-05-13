@@ -208,8 +208,15 @@ class ActionList(ActionView, ListView):
     def get_queryset(self):
         queryset = super(ActionList, self).get_queryset()
         if self.kwargs.get('status'):
-            queryset = queryset.filter(
-                status=self.kwargs.get('status'))
+            if self.kwargs.get('status') == 'overdue':
+                agreement = self.get_agreement()
+                actions = agreement.get_overdue_actions()
+                action_ids = actions.values_list(
+                    'id', flat=True)
+                queryset = queryset.filter(id__in=action_ids)
+            else:
+                queryset = queryset.filter(
+                    status=self.kwargs.get('status'))
         return queryset
 
 class ActionExport(ExportMixin, ActionList):
@@ -269,16 +276,23 @@ class AttachmentView(BaseAgreementView):
         queryset = super(
             AttachmentView, self).get_queryset()
         agreements = self.request.user.agreement_set.all()
-        return queryset.filter(commitment__agreement__in=agreements)
+        return queryset.filter(
+            commitment__agreement__in=agreements)
 
     def get_success_url(self):
         attachment = self.get_object()
         if attachment.commitment:
-            return reverse('commitment-detail',
-                kwargs={'pk':attachment.commitment.id})
+            commitment = attachment.commitment
+            return reverse('commitment-detail', kwargs={
+                'pk':commitment.id,
+                'agreement':commitment.agreement.slug
+            })
         elif attachment.action:
-            return reverse('action-detail', 
-                kwargs={'pk':attachment.action.id})
+            action = attachment.action
+            return reverse('action-detail', kwargs={
+                'pk':action.id,
+                'attachment':action.commitment.agreement.slug
+            })
         else:
             return reverse('dashboard')
 
