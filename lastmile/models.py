@@ -28,6 +28,30 @@ class Agreement(models.Model):
         return reverse('agreement-detail', kwargs={
             'agreement':self.slug})
 
+    def get_action_items(self):
+        return Action.objects.filter(
+            commitment__agreement=self).distinct()
+
+    def get_complete_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.COMPLETE)
+
+    def get_active_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.ACTIVE)
+
+    def get_pending_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.PENDING)
+
+    def get_overdue_actions(self):
+        overdue = []
+        action_items = self.get_action_items()
+        for item in action_items:
+            if item.get_status() == 'overdue':
+                overdue.append(item)
+        return overdue
+
     def create_unique_slug(self):
         iterator = 1
         slug = slugify(self.name)

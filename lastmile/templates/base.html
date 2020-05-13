@@ -84,7 +84,9 @@
       z-index: 999;
       background: #DEF2F1;
       color: #16252A;
-      transition: all 0.3s;
+/*      transition: all 0.3s;*/
+      transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+      transform-origin: center left; 
     }
       #sidebar a, #sidebar a:hover, #sidebar a:focus {
         color: inherit;
@@ -114,6 +116,8 @@
       }
       #sidebar.active {
         margin-left: -250px;
+        position: relative;
+        transform: rotateY(100deg);
       }
       #sidebar ul ul a {
         font-size: 0.9em !important;
@@ -209,6 +213,13 @@
         console.log('click');
         $( '#sidebar' ).toggleClass( 'active' );
       });
+      // $(document).ready(function(){
+      //   $( "#sidebarCollapse" ).click(function(){
+      //       $("#sidebar").animate({
+      //           width: "toggle"
+      //       });
+      //   });
+      // });
     </script>
   </body>
 </html>
