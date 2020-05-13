@@ -2,7 +2,7 @@
 {% block body %}
 <h1>Last Mile</h1>
 {% for agreement in request.user.agreement_set.all %}
-<h2>{{ agreement.name }}</h2>
+<h2 class="text-lightgreen">{{ agreement.name }}</h2>
 <div class="card mt-5">
   <table class="table" data-sorting="true">
     <thead>
@@ -16,7 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for commitment in commitment_list %}
+      {% for commitment in agreement.commitment_set.all %}
       <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
         <th scope="row"><a href="{{ commitment.get_absolute_url }}" class="pl-2 {{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
          <td><a href="{{ commitment.category.get_absolute_url }}" class="{{ commitment.get_text_color }}">{{ commitment.category.name }}</a></td>
