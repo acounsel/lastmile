@@ -8,9 +8,8 @@ from django.views.generic.edit import DeleteView
 from django.urls import reverse, reverse_lazy
     
 from .functions import get_export_response
-from .models import Action, Actor, Commitment
-from .models import CommitmentCategory, Update
-from .models import Attachment
+from .models import Action, Actor, Agreement, Attachment
+from .models import Commitment, CommitmentCategory, Update
 
 class ExportMixin():
 
@@ -29,6 +28,33 @@ class StaffMixin(UserPassesTestMixin):
             return self.request.user.is_staff
         else:
             return False
+
+class AgreementMixin(UserPassesTestMixin):
+    login_url = '/login/'
+
+    def get_agreement(self):
+        if self.kwargs.get('agreement'):
+            try:
+                agreement = Agreement.objects.get(
+                    slug=self.kwargs.get('agreement'))
+                return agreement
+            except Agreement.DoesNotExist:
+                return None
+        else:
+            return Agreement.objects.first()
+
+    def test_func(self):
+        user = self.request.user
+        if user.is_authenticated and self.get_agreement():
+            if user in self.get_agreement().users.all():
+                return True
+        else:
+            return False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['agreement'] = self.get_agreement()
+        return context
 
 class AttachmentMixin():
 
@@ -50,9 +76,8 @@ class AttachmentMixin():
 class BaseView(LoginRequiredMixin, View):
     login_url = '/login/'
 
-class CommitmentCategoryView(BaseView):
-    model = CommitmentCategory
-    fields = ['name', 'description']
+class BaseAgreementView(AgreementMixin, BaseView):
+    pass
 
 class DeleteView(StaffMixin, DeleteView):
     success_url = reverse_lazy('dashboard')
@@ -61,6 +86,35 @@ class DeleteView(StaffMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Succesfully Deleted')
         return super().delete(request, *args, **kwargs)
+
+class AgreementView(BaseAgreementView):
+    model = Agreement
+    fields = ['name', 'users']
+    slug_url_kwarg = 'agreement'
+
+    def get_queryset(self):
+        queryset = super(
+            AgreementView, self).get_queryset()
+        return queryset.filter(users=self.request.user)
+
+class AgreementDetail(AgreementView, DetailView):
+    pass
+
+class AgreementCreate(AgreementView, CreateView):
+    pass
+
+class AgreementUpdate(AgreementView, UpdateView):
+    pass
+
+class CommitmentCategoryView(BaseAgreementView):
+    model = CommitmentCategory
+    fields = ['name', 'description']
+
+    def get_queryset(self):
+        queryset = super(
+            CommitmentCategoryView, self).get_queryset()
+        agreements = self.request.user.agreement_set.all()
+        return queryset.filter(agreement__in=agreements)
 
 class CommitmentCategoryList(
     CommitmentCategoryView, ListView):
@@ -82,7 +136,7 @@ class CommitmentCategoryDelete(
     CommitmentCategoryView, DeleteView):
     pass
 
-class CommitmentView(BaseView):
+class CommitmentView(BaseAgreementView):
     model = Commitment
     fields = ['name', 'description', 'category',
         'status', 'status_description',
@@ -90,13 +144,23 @@ class CommitmentView(BaseView):
         'completion_date', 'goal',
         'progress_toward_goal']
 
+    def get_queryset(self):
+        queryset = super(CommitmentView, self).get_queryset()
+        agreements = self.request.user.agreement_set.all()
+        return queryset.filter(agreement__in=agreements)
+
+    def form_valid(self, form):
+        form.instance.agreement = self.get_agreement()
+        return super().form_valid(form)
+
 class CommitmentList(CommitmentView, ListView):
     pass
 
 class CommitmentExport(ExportMixin, CommitmentList):
     pass
         
-class CommitmentDetail(AttachmentMixin, CommitmentView, DetailView):
+class CommitmentDetail(
+    AttachmentMixin, CommitmentView, DetailView):
     pass
 
 class CommitmentCreate(CommitmentView, CreateView):
@@ -126,12 +190,18 @@ class CommitmentDelete(CommitmentView, DeleteView):
 class Dashboard(CommitmentList):
     template_name = 'lastmile/dashboard.html'
 
-class ActionView(BaseView):
+class ActionView(BaseAgreementView):
     model = Action
     fields = ['name', 'description', 'status',
         'status_description','commitment',
         'responsible_parties', 'expected_completion_date',
         'completion_date']
+
+    def get_queryset(self):
+        queryset = super(ActionView, self).get_queryset()
+        agreements = self.request.user.agreement_set.all()
+        return queryset.filter(
+            commitment__agreement__in=agreements).distinct()
 
 class ActionList(ActionView, ListView):
     
@@ -171,7 +241,7 @@ class CommitmentActionCreate(ActionCreate):
         return reverse('commitment-detail', kwargs={
                 'pk':self.kwargs.get('pk')})
 
-class ActorView(BaseView):
+class ActorView(BaseAgreementView):
     model = Actor
     fields = ['name', 'user']
 
@@ -190,10 +260,16 @@ class ActorUpdate(ActorView, UpdateView):
 class ActorDelete(ActorView, DeleteView):
     pass
 
-class AttachmentView(BaseView):
+class AttachmentView(BaseAgreementView):
     model = Attachment
     fields = ['name', 'file', 'description', 'commitment', 
         'action']
+
+    def get_queryset(self):
+        queryset = super(
+            AttachmentView, self).get_queryset()
+        agreements = self.request.user.agreement_set.all()
+        return queryset.filter(commitment__agreement__in=agreements)
 
     def get_success_url(self):
         attachment = self.get_object()

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>Actors</h1>
-<p><a href="{% url 'action-export' %}">Export</a></p>
+<p><a href="{% url 'action-export' agreement=agreement.slug %}">Export</a></p>
 <div class="mt-5">
   <table class="table table-hover">
     <thead>
@@ -16,7 +16,7 @@
     <tbody>
       {% for actor in actor_list %}
       <tr>
-        <th scope="row"><a href="{% url 'actor-detail' pk=actor.id %}" class="text-dark">{{ actor.name }}</a></th>
+        <th scope="row"><a href="{% url 'actor-detail' pk=actor.id agreement=agreement.slug %}" class="text-dark">{{ actor.name }}</a></th>
         <td class="text-dark">{{ actor.action_set.count }}</td>
         <td class="text-dark">{{ actor.get_completed_actions.count }}</td>
         <td class="text-dark">{{ actor.get_ongoing_actions.count }}</td>

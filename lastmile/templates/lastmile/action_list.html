@@ -4,7 +4,7 @@
 {% if view.kwargs.status %}
 <a href="{% url 'action-list' %}">View All Action Items</a>
 {% else %}
-<a href="{% url 'action-list-by-status' status='active' %}">View Active Only</a>
+<a href="{% url 'action-list-by-status' status='active' agreement=agreement.slug %}">View Active Only</a>
 {% endif %}
 <table class="table" data-sorting="true">
   <thead>
@@ -20,7 +20,7 @@
   <tbody>
     {% for action in action_list %}
     <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
-      <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
+      <th scope="row"><a href="{{ action.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
       <td><a href="{{ action.commitment.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.commitment }}</a></td>
       <td><a href="{{ action.responsible_party.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.responsible_parties.all|join:", " }}</a></td>
       <td>{{ action.expected_completion_date }}</td>

@@ -8,12 +8,58 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
-from django_lastmile.storage_backends import PrivateMediaStorage
-from django_lastmile.storage_backends import PublicMediaStorage
+from django_lastmile import storage_backends
 
 class Agreement(models.Model):
     
     name = models.CharField(max_length=255)
+    slug = models.SlugField(
+        max_length=255, blank=True)
+    users = models.ManyToManyField(User, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = self.create_unique_slug()
+        super(Agreement, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('agreement-detail', kwargs={
+            'agreement':self.slug})
+
+    def get_action_items(self):
+        return Action.objects.filter(
+            commitment__agreement=self).distinct()
+
+    def get_complete_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.COMPLETE)
+
+    def get_active_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.ACTIVE)
+
+    def get_pending_actions(self):
+        action_items = self.get_action_items()
+        return action_items.filter(status=Action.PENDING)
+
+    def get_overdue_actions(self):
+        overdue = []
+        action_items = self.get_action_items()
+        for item in action_items:
+            if item.get_status() == 'overdue':
+                overdue.append(item)
+        return overdue
+
+    def create_unique_slug(self):
+        iterator = 1
+        slug = slugify(self.name)
+        while self.__class__.objects.exclude(
+            id=self.id).filter(slug=slug):
+            iterator += 1
+            slug = slugify(self.name) + str(iterator)
+        return slug
 
 class CommitmentCategory(models.Model):
     
@@ -35,18 +81,25 @@ class CommitmentCategory(models.Model):
     def create_unique_slug(self):
         iterator = 1
         slug = slugify(self.name)
-        while self.__class__.objects.exclude(id=self.id).filter(slug=slug):
+        while self.__class__.objects.exclude(
+            id=self.id).filter(slug=slug):
             iterator += 1
             slug = slugify(self.name) + str(iterator)
         return slug
         
     def get_absolute_url(self):
         return reverse('commitment-category-detail',
-            kwargs={'slug':self.slug})
+            kwargs={
+                'slug':self.slug,
+                'agreement':self.agreement.slug
+            })
 
     def get_delete_url(self):
         return reverse('commitment-category-delete',
-            kwargs={'slug':self.slug})
+            kwargs={
+                'slug':self.slug,
+                'agreement':self.agreement.slug
+            })
 
 class Commitment(models.Model):
     PENDING = 'pending'
@@ -85,17 +138,20 @@ class Commitment(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('commitment-detail', kwargs={'pk':self.id})
+        return reverse('commitment-detail', kwargs={
+            'pk':self.id, 
+            'agreement':self.agreement.slug})
 
     def get_delete_url(self):
-        return reverse('commitment-delete', kwargs={'pk':self.id})
+        return reverse('commitment-delete', kwargs={
+            'pk':self.id,
+            'agreement':self.agreement.slug})
 
     def save(self, *args, **kwargs):
         new = False
         if not self.id:
             new = True
         super(Commitment, self).save(*args, **kwargs)
-        print('Me: {}'.format(self))
         if new:
             update = Update.objects.create(
                 description='Commitment Added',
@@ -166,6 +222,8 @@ class Commitment(models.Model):
 class Actor(models.Model):
 
     name = models.CharField(max_length=255)
+    agreement = models.ManyToManyField(Agreement, 
+        blank=True)
     user = models.OneToOneField(User,
         on_delete=models.SET_NULL,
         blank=True, null=True)
@@ -176,10 +234,14 @@ class Actor(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('actor-detail', kwargs={'pk':self.id})
+        return reverse('actor-detail', kwargs={
+            'pk':self.id,
+            'agreement':self.agreement.first().slug})
 
     def get_delete_url(self):
-        return reverse('actor-delete', kwargs={'pk':self.id})
+        return reverse('actor-delete', kwargs={
+            'pk':self.id,
+            'agreement':self.agreement.first().slug})
 
     def get_completed_actions(self):
         return self.action_set.filter(status=Action.COMPLETE)
@@ -191,7 +253,8 @@ class Actor(models.Model):
 
     def get_overdue_actions(self):
         i = 0
-        for action in self.action_set.filter(status=Action.ACTIVE):
+        for action in self.action_set.filter(
+            status=Action.ACTIVE):
             i += 1
         return i
 
@@ -230,10 +293,14 @@ class Action(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('action-detail', kwargs={'pk':self.id})
+        return reverse('action-detail', kwargs={
+            'pk':self.id,
+            'agreement':self.commitment.agreement.slug})
 
     def get_delete_url(self):
-        return reverse('action-delete', kwargs={'pk':self.id})
+        return reverse('action-delete', kwargs={
+            'pk':self.id,
+            'agreement':self.commitment.agreement.slug})
 
     def save(self, *args, **kwargs):
         new = False
@@ -290,19 +357,30 @@ class Action(models.Model):
 class Attachment(models.Model):
 
     name = models.CharField(max_length=255)
-    file = models.FileField(storage=PrivateMediaStorage(),
+    file = models.FileField(
+        storage=storage_backends.PrivateMediaStorage(),
         upload_to='files/', blank=True, null=True)
     description = models.TextField(blank=True)
-    commitment = models.ForeignKey(Commitment, models.SET_NULL, blank=True, null=True)
-    action = models.ForeignKey(Action, on_delete=models.SET_NULL, blank=True, null=True)
+    commitment = models.ForeignKey(Commitment, 
+        models.SET_NULL, blank=True, null=True)
+    action = models.ForeignKey(Action, 
+        on_delete=models.SET_NULL, blank=True, null=True)
     date_added = models.DateField(auto_now_add=True)
-    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    uploaded_by = models.ForeignKey(User, 
+        on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('attachment-detail', kwargs={
+            'pk':self.id,
+            'agreement':self.commitment.agreement.slug})
+
     def get_delete_url(self):
-        return reverse('attachment-delete', kwargs={'pk':self.id})
+        return reverse('attachment-delete', kwargs={
+            'pk':self.id,
+            'agreement':self.commitment.agreement.slug})
 
     def save(self, *args, **kwargs):
         new = False
@@ -322,7 +400,7 @@ class UpdateManager(models.Manager):
     def add_delay(self, action, date):
         delay = date - action.expected_completion_date
         update = Update.objects.create(
-            description = '{0} Days Past Deadline - {1}'.format(
+            description='{0} Days Past Deadline - {1}'.format(
                 delay.days,
                 action.expected_completion_date
             ),
@@ -412,8 +490,6 @@ class Update(models.Model):
             obj = sender.objects.get(pk=instance.pk)
         except sender.DoesNotExist:
             pass
-            # update = Update.save_addition(instance, 'action')
-            # update.add_commitment()
         else:
             for field in sender._meta.get_fields():
                 update = Update.save_revision(
@@ -428,31 +504,46 @@ class Update(models.Model):
         except sender.DoesNotExist:
             pass
         else:
-            for field in ('file', 'description', 'commitment', 'action'):
+            for field in ('file', 'description', 
+                'commitment', 'action'):
                 update = Update.save_attachment_revision(
                     field, obj, instance)
 
     def save_attachment_revision(field, obj, instance):
-        old = getattr(obj, field)
-        new = getattr(instance, field)
-        if old != new:
-            update = Update.objects.create(
-                _type=Update.OTHER,
-            )
-            update.description = Update.get_description_string(instance, old, new, field)
-            setattr(update, 'action', instance.action)
-            setattr(update, 'commitment', instance.commitment)
-            update.save()
-            return update
+        try:
+            old = getattr(obj, field)
+            new = getattr(instance, field)
+            if old != new:
+                update = Update.objects.create(
+                    _type=Update.OTHER,
+                    description=Update.get_description_string(
+                    instance, old, new, field)
+                )
+                for field in ('action', 'commitment'):
+                    setattr(update, field, 
+                        getattr(instance, field)
+                    )
+                update.save()
+                return update
+        except Exception as error:
+            print(error)
+            pass
 
     def get_description_string(instance, old, new, field):
-        if old == None or old == '':
-            if field == 'commitment' or field == 'action':
-                description = '{0} Added by {1}'.format(instance.name, instance.uploaded_by)
+        if old in (None, ''):
+            if field in ('commitment', 'action'):
+                description = '{0} Added by {1}'.format(
+                    instance.name, instance.uploaded_by)
             else:
-                description = '{0} {1} Added by {2}'.format(instance.name, field, instance.uploaded_by)
-        elif old != None or old != '':
-            description = '{0} {1} changed from {2} to {3}'.format(instance.name, field, old, new)
+                description = '{0} {1} Added by {2}'.format(
+                    instance.name, 
+                    field, 
+                    instance.uploaded_by
+                )
+        else:
+            description = '{0} {1} changed \
+                from {2} to {3}'.format(
+                    instance.name, field, old, new)
         return 'Attachment: {}'.format(description)
 
     def save_addition(instance, model_name):
@@ -471,7 +562,7 @@ class Update(models.Model):
             new = getattr(instance, field.name)
             if old != new:
                 update = Update.objects.create(
-                    description='{0} changed from {1} to {2}' \
+                    description='{0} changed from {1} to {2}'\
                     .format(field.name.title(), old, new),
                     _type=Update.REVISION,
                 )

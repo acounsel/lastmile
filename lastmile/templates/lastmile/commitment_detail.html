@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>{{ commitment.name }}</h1>
-<p><a href="{% url 'commitment-update' pk=commitment.id %}">Edit</a></p>
+<p><a href="{% url 'commitment-update' pk=commitment.id agreement=agreement.slug %}">Edit</a></p>
 <div class="card p-4 mt-5">
   <h2><strong>Category:</strong> <a href="{{ commitment.category.get_absolute_url }}">{{ commitment.category.name }}</a></h2>
   <h3><strong>Status:</strong> {{ commitment.get_status_display }}</h3>
@@ -10,7 +10,7 @@
   {% if self.get_percent_progress %}{{ self.get_percent_progress }}% Progress{% endif %}<p></p>
   <div class="mt-5">
     <h4>Actions</h4>
-    <a href="{% url 'commitment-action-create' pk=commitment.id %}">Add Action</a>
+    <a href="{% url 'commitment-action-create' pk=commitment.id agreement=agreement.slug %}">Add Action</a>
     <table class="table" data-sorting="true">
       <thead>
         <tr>
@@ -24,10 +24,10 @@
       <tbody>
         {% for action in commitment.action_set.all %}
         <tr class="bg-{{ action.get_status_color }} {{ action.get_text_color }}">
-          <th scope="row"><a href="{% url 'action-detail' pk=action.id %}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
+          <th scope="row"><a href="{{ action.get_absolute_url }}" class="{{ action.get_text_color }}">{{ action.name }}</a></th>
           <td>
             {% for party in action.responsible_parties.all %}
-            <a href="{% url 'actor-detail' pk=party.id %}" class="{{ action.get_text_color }}">{{ party }} </a>
+            <a href="{{ party.get_absolute_url }}" class="{{ action.get_text_color }}">{{ party }} </a>
             {% endfor %}
           </td>
           <td>{{ action.expected_completion_date }}</td>
