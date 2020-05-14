@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>{{ commitment.name }}</h1>
-<p><a href="{% url 'commitment-update' pk=commitment.id agreement=agreement.slug %}">Edit</a></p>
+<p><a class="text-white" href="{% url 'commitment-update' pk=commitment.id agreement=agreement.slug %}">Edit</a></p>
 <div class="card p-4 mt-5">
   <h2><strong>Category:</strong> <a href="{{ commitment.category.get_absolute_url }}">{{ commitment.category.name }}</a></h2>
   <h3><strong>Status:</strong> {{ commitment.get_status_display }}</h3>

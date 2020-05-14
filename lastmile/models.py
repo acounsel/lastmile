@@ -49,8 +49,9 @@ class Agreement(models.Model):
         action_items = self.get_action_items()
         for item in action_items:
             if item.get_status() == 'overdue':
-                overdue.append(item)
-        return overdue
+                overdue.append(item.id)
+        actions = Action.objects.filter(id__in=overdue)
+        return actions
 
     def create_unique_slug(self):
         iterator = 1

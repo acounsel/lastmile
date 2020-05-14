@@ -2,7 +2,7 @@
 {% block body %}
 <h1>{{ action_list.count }} Action Items {% if view.kwargs.status %}({{ view.kwargs.status }}){% endif %}</h1>
 {% if view.kwargs.status %}
-<a href="{% url 'action-list' %}">View All Action Items</a>
+<a href="{% url 'action-list' agreement=agreement.slug %}">View All Action Items</a>
 {% else %}
 <a href="{% url 'action-list-by-status' status='active' agreement=agreement.slug %}">View Active Only</a>
 {% endif %}

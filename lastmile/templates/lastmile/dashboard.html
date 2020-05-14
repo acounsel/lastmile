@@ -21,13 +21,13 @@
       {% for agreement in request.user.agreement_set.all %}
       <tr>
         <th scope="row"><a href="{{ agreement.get_absolute_url }}" class="pl-2">{{ agreement.name }}</a></th>
-        <td class="text-center"><a href="{% url 'commitment-list' agreement=agreement.slug %}">{{ agreement.commitment_set.count }}</a></td>
-        <td class="text-center"><a href="{% url 'actor-list' agreement=agreement.slug %}">{{ agreement.actor_set.count }}</a></td>
-        <td class="text-center"><a href="{% url 'action-list' agreement=agreement.slug %}">{{ agreement.get_action_items.count }}</a></td>
-        <td class="text-center">{{ agreement.get_complete_actions.count }}</td>
-        <td class="text-center">{{ agreement.get_active_actions.count }}</td>
-        <td class="text-center text-danger">{{ agreement.get_overdue_actions|length }}</td>
-        <td class="text-center">{{ agreement.get_pending_actions.count }}</td>
+        <td class="text-center font-weight-bold"><a href="{% url 'commitment-list' agreement=agreement.slug %}">{{ agreement.commitment_set.count }}</a></td>
+        <td class="text-center font-weight-bold"><a href="{% url 'actor-list' agreement=agreement.slug %}">{{ agreement.actor_set.count }}</a></td>
+        <td class="text-center font-weight-bold"><a href="{% url 'action-list' agreement=agreement.slug %}">{{ agreement.get_action_items.count }}</a></td>
+        <td class="text-center font-weight-bold"><a href="{% url 'action-list-by-status' status='complete' agreement=agreement.slug %}">{{ agreement.get_complete_actions.count }}</a></td>
+        <td class="text-center font-weight-bold"><a href="{% url 'action-list-by-status' status='active' agreement=agreement.slug %}">{{ agreement.get_active_actions.count }}</td>
+        <td class="text-center font-weight-bold"><a href="{% url 'action-list-by-status' status='overdue' agreement=agreement.slug %}" class="text-danger">{{ agreement.get_overdue_actions|length }}</td>
+        <td class="text-center font-weight-bold"><a href="{% url 'action-list-by-status' status='pending' agreement=agreement.slug %}">{{ agreement.get_pending_actions.count }}</a></td>
       </tr>
       {% endfor %}
     </tbody>
