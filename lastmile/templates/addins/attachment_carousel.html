@@ -45,7 +45,11 @@
               <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="col-12 col-sm-3">
                   <div class="card mb-2">
-                    <img width="900" height="1200" style="object-fit:cover;height:200px" class="d-block card-img-top" src="{{ attachment.file.url }}" alt="{{ attachment.name }}">
+                    {% if '.pdf' in attachment.file.name or '.PDF' in attachment.file.name %}
+                      <iframe width="900" height="1200" style="object-fit:cover;height:200px" class="embed-responsive-item d-block card-img-top" src="{{ attachment.file.url }}#view=Fit" alt="{{ attachment.name }}"></iframe>
+                    {% else %}
+                      <img width="900" height="1200" style="object-fit:cover;height:200px" class="d-block card-img-top" src="{{ attachment.file.url }}" alt="{{ attachment.name }}">
+                    {% endif %}
                     <div class="card-body">
                       <h4 class="card-title">{{ attachment.name }}</h4>
                       <p class="card-text"><small class="text-muted">{{ attachment.description|truncatechars:100 }}</small></p>

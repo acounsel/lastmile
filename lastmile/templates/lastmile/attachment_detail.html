@@ -9,8 +9,14 @@
     {% if attachment.action %}<p>Action: <a style="color:#212529" href="{% url 'action-detail' pk=attachment.action.id agreement=attachment.action.commitment.agreement.slug %}"><strong>{{ attachment.action.name }}</strong></a></p>{% endif %}
     <p>Date Added: {{ attachment.date_added }}</p>
     <p>Uploaded by: {{ attachment.uploaded_by }}</p>
-    <div class="mx-auto">
-        <img class="img-fluid" src="{{ attachment.file.url }}">
-    </div>
+    {% if '.pdf' or '.PDF' in attachment.file.name %}
+        <div class="embed-responsive embed-responsive-1by1">
+            <iframe class="embed-responsive-item" src="{{ attachment.file.url }}"></iframe>
+        </div>
+    {% else %}
+        <div class="mx-auto">
+            <img class="img-fluid" src="{{ attachment.file.url }}">
+        </div>
+    {% endif %}
 </div>
 {% endblock  %}
