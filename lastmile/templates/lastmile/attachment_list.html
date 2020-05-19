@@ -6,7 +6,11 @@
         {% for attachment in attachment_list %}
             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
                 <div class="card mb-5">
-                    <a href="{{ attachment.get_absolute_url }}"><img class="img-fluid" src="{{ attachment.file.url }}"></a>
+                    {% if '.pdf' in attachment.file.name or '.PDF' in attachment.file.name %}
+                        <a href="{{ attachment.get_absolute_url }}"><iframe style="object-fit:cover;height:250px;width:100%;" class="embed-responsive-item" src="{{ attachment.file.url }}#view=Fit" alt="{{ attachment.name }}"></iframe></a>
+                    {% else %}
+                        <a href="{{ attachment.get_absolute_url }}"><img class="img-fluid" src="{{ attachment.file.url }}"></a>
+                    {% endif %}
                     <div class="card-header">{{ attachment.name }}</div>
                 </div>
 
