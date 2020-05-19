@@ -186,11 +186,15 @@
   <body>
     <header>
       {% include 'addins/messages.html' %}
+      {% block header %}
       {% include 'addins/navbar.html' %}
+      {% endblock %}
     </header>
     <main>
       <div class="wrapper">
+        {% block sidebar %}
         {% include 'addins/sidebar.html' %}
+        {% endblock %}
         <div id="content" class="w-100">
           <div class="py-5 w-75 w-100-r mx-auto mb-5">
           {% block body %}
