@@ -387,6 +387,8 @@ class Attachment(models.Model):
         new = False
         if not self.id:
             new = True
+        if self.action:
+            self.commitment = self.action.commitment
         super(Attachment, self).save(*args, **kwargs)
         if new:
             update = Update.objects.create(
