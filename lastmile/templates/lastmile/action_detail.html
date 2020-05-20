@@ -3,10 +3,10 @@
 <h1><a class="text-white" href="{{ action.commitment.get_absolute_url }}">{{ action.commitment.name }}</a></h1>
 <div class="card p-4">
   <h2>{{ action.name }}</h2>
+  <p>{{ action.description }}</p>
   <p><a href="{% url 'action-update' pk=action.id agreement=agreement.slug %}">Edit</a></p>
   <h3>Status: {{ action.get_status_display }}</h3>
   <h4>Explanation: {{ action.status_description }}</h4>
-  <p>{{ action.description }}</p>
   <div class="mt-5">
     <h4>Attachments</h4>
     {% include 'addins/attachment_form.html' with attachment_list=action.attachment_set.all %}
