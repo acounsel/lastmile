@@ -236,7 +236,16 @@ class ActionUpdate(ActionView, UpdateView):
     pass
 
 class ActionDelete(ActionView, DeleteView):
-    pass
+    
+    def get_success_url(self):
+        if self.object.commitment:
+            commitment = self.object.commitment
+            return reverse_lazy('commitment-detail', kwargs={
+                'pk': commitment.id,
+                'agreement': commitment.agreement.slug,
+            })
+        else:
+            return reverse_lazy('dashboard')
 
 class CommitmentActionCreate(ActionCreate):
     

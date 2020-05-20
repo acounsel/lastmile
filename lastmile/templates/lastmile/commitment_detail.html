@@ -43,28 +43,6 @@
     {% include 'addins/attachment_form.html' with attachment_list=commitment.attachment_set.all %}
     {% include 'addins/attachment_carousel.html' with attachment_list=commitment.attachment_set.all %}
   </div>
-  <div class="mt-5">
-    <h4>History</h4>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Type</th>
-          <th scope="col">Action</th>
-          <th scope="col">Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for update in commitment.update_set.all %}
-        <tr>
-          <th scope="row">{{ update.date_created }}</th>
-          <td>{{ update.get__type_display }}</td>
-          <td>{{ update.action }}</td>
-          <td>{{ update.description }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  {% include 'addins/update_table.html' with action=commitment %}
 </div>
 {% endblock %}
