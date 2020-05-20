@@ -14,7 +14,7 @@
   <tbody>
     {% for category in commitmentcategory_list %}
     <tr>
-      <th scope="row"><a  class="text-dark" href="{% url 'commitment-category-detail' slug=category.slug %}">{{ category.name }}</a></th>
+      <th scope="row"><a  class="text-dark" href="{% url 'commitment-category-detail' slug=category.slug agreement=category.agreement.slug %}">{{ category.name }}</a></th>
       <td class="text-dark">{{ category.commitment_set.count }}</td>
       <td class="text-dark">{{ category.get_actions }}</td>
       <td class="text-dark">{{ category.get_current_actions }}</td>

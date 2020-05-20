@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>{{ commitmentcategory.name }}</h1>
-<p><a href="{% url 'commitment-category-update' slug=commitmentcategory.slug %}">Edit</a></p>
+<p><a href="{% url 'commitment-category-update' slug=commitmentcategory.slug agreement=commitmentcategory.agreement.slug %}">Edit</a></p>
 <p class="pt-3">{{ commitmentcategory.description }}</p>
 <div class="mt-5">
   <h4>Actions</h4>
-  <a href="{% url 'category-commitment-create' slug=commitmentcategory.slug %}">Add Commitment</a>
+  <a href="{% url 'category-commitment-create' slug=commitmentcategory.slug agreement=commitmentcategory.agreement.slug %}">Add Commitment</a>
   <table class="table">
     <thead>
       <tr>
@@ -19,7 +19,7 @@
     <tbody>
       {% for commitment in commitmentcategory.commitment_set.all %}
       <tr class="bg-{{ commitment.get_status_color }} {{ commitment.get_text_color }}">
-        <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id %}" class="{{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
+        <th scope="row"><a href="{% url 'commitment-detail' pk=commitment.id agreement=commitment.agreement.slug %}" class="{{ commitment.get_text_color }}">{{ commitment.name }}</a></th>
         <td>{{ commitment.action_set.count }}</td>
         <td>{{ commitment.target }}</td>
         <td>{{ commitment.current }}</td>

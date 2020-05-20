@@ -116,6 +116,10 @@ class CommitmentCategoryView(BaseAgreementView):
         agreements = self.request.user.agreement_set.all()
         return queryset.filter(agreement__in=agreements)
 
+    def form_valid(self, form):
+        form.instance.agreement = self.get_agreement()
+        return super().form_valid(form)
+
 class CommitmentCategoryList(
     CommitmentCategoryView, ListView):
     pass
