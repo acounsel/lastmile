@@ -29,7 +29,7 @@ class StaffMixin(UserPassesTestMixin):
         else:
             return False
 
-class AgreementMixin(UserPassesTestMixin):
+class AgreementMixin(StaffMixin):
     login_url = '/login/'
 
     def get_agreement(self):
@@ -41,15 +41,16 @@ class AgreementMixin(UserPassesTestMixin):
             except Agreement.DoesNotExist:
                 return None
         else:
-            return Agreement.objects.first()
+            return Agreement.objects.filter(
+                users=self.request.user)[0]
 
-    def test_func(self):
-        user = self.request.user
-        if user.is_authenticated and self.get_agreement():
-            if user in self.get_agreement().users.all():
-                return True
-        else:
-            return False
+    # def test_func(self):
+    #     user = self.request.user
+    #     if user.is_authenticated and self.get_agreement():
+    #         if user in self.get_agreement().users.all():
+    #             return True
+    #     else:
+    #         return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
