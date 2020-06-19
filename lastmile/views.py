@@ -201,6 +201,7 @@ class ActionView(BaseAgreementView):
         'status_description','commitment',
         'responsible_parties', 'expected_completion_date',
         'completion_date']
+    success_url = reverse_lazy('dashboard')
 
     def get_queryset(self):
         queryset = super(ActionView, self).get_queryset()
@@ -265,6 +266,7 @@ class CommitmentActionCreate(ActionCreate):
 class ActorView(BaseAgreementView):
     model = Actor
     fields = ['name', 'user']
+    success_url = reverse_lazy('dashboard')
 
 class ActorList(ActorView, ListView):
     pass
