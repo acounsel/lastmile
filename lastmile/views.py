@@ -261,6 +261,7 @@ class CommitmentActionCreate(ActionCreate):
     
     def get_success_url(self):
         return reverse('commitment-detail', kwargs={
+                'agreement':self.kwargs.get('agreement'),
                 'pk':self.kwargs.get('pk')})
 
 class ActorView(BaseAgreementView):
