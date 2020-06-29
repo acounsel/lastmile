@@ -266,7 +266,7 @@ class CommitmentActionCreate(ActionCreate):
 
 class ActorView(BaseAgreementView):
     model = Actor
-    fields = ['name', 'user']
+    fields = ['name', 'user', 'agreement']
     success_url = reverse_lazy('dashboard')
 
 class ActorList(ActorView, ListView):
