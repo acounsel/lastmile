@@ -276,14 +276,11 @@ class ActorView(BaseAgreementView):
 
     def get_initial(self):
         agreement = self.get_agreement()
-        return {
-            'agreement': agreement,
-        }
+        return {'agreement': agreement}
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
-        form.fields['agreement'].queryset = \
-            Agreement.objects.filter(users=self.request.user)
+        form.fields['agreement'].queryset = Agreement.objects.filter(users=self.request.user)
         return form
 
 class ActorList(ActorView, ListView):
