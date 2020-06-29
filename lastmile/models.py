@@ -110,11 +110,13 @@ class Commitment(models.Model):
     ACTIVE = 'active'
     COMPLETE = 'complete'
     FAILED = 'failed'
+    UNKNOWN = 'unknown'
     STATUS_CHOICES = (
         (PENDING, 'Not Started'),
         (ACTIVE, 'Active'),
         (COMPLETE, 'Complete'),
         (FAILED, 'Failed'),
+        (UNKNOWN, 'Unknown'),
     )
 
     name = models.CharField(max_length=255)
