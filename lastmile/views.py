@@ -154,10 +154,10 @@ class CommitmentView(BaseAgreementView):
     #     agreements = self.request.user.agreement_set.all()
     #     return queryset.filter(agreement__in=agreements)
 
-    def get_queryset(self):
-        queryset = super(CommitmentView, self).get_queryset()
-        agreement = self.get_agreement()
-        return queryset.filter(agreement=agreement)
+    # def get_queryset(self):
+    #     queryset = super(CommitmentView, self).get_queryset()
+    #     agreement = self.get_agreement()
+    #     return queryset.filter(agreement=agreement)
 
     def form_valid(self, form):
         form.instance.agreement = self.get_agreement()
@@ -274,15 +274,15 @@ class ActorView(BaseAgreementView):
     fields = ['name', 'user', 'agreement']
     success_url = reverse_lazy('dashboard')
 
-    def get_initial(self):
-        agreement = self.get_agreement()
-        return {'agreement': agreement}
+    # def get_initial(self):
+    #     agreement = self.get_agreement()
+    #     return {'agreement': agreement}
 
-    # def get_form(self, *args, **kwargs):
-    #     form = super().get_form(*args, **kwargs)
-    #     form.fields['agreement'].queryset = \
-    #         Agreement.objects.filter(users=self.request.user)
-    #     return form
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        form.fields['agreement'].queryset = \
+            Agreement.objects.filter(users=self.request.user)
+        return form
 
 class ActorList(ActorView, ListView):
     
