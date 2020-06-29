@@ -285,11 +285,11 @@ class ActorView(BaseAgreementView):
     #     return form
 
 class ActorList(ActorView, ListView):
-    
-    def get_queryset(self):
-        queryset = super(ActorList, self).get_queryset()
-        agreement = self.get_agreement()
-        return queryset.filter(agreement=agreement)
+    pass    
+    # def get_queryset(self):
+    #     queryset = super(ActorList, self).get_queryset()
+    #     agreement = self.get_agreement()
+    #     return queryset.filter(agreement=agreement)
 
 class ActorDetail(ActorView, DetailView):
     pass
