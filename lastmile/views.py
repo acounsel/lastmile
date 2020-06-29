@@ -270,7 +270,11 @@ class ActorView(BaseAgreementView):
     success_url = reverse_lazy('dashboard')
 
 class ActorList(ActorView, ListView):
-    pass
+    
+    def get_queryset(self):
+        queryset = super(ActorList, self).get_queryset()
+        agreement = self.get_agreement()
+        return queryset.filter(agreement=agreement)
 
 class ActorDetail(ActorView, DetailView):
     pass
