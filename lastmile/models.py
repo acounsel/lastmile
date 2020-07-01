@@ -62,6 +62,44 @@ class Agreement(models.Model):
             slug = slugify(self.name) + str(iterator)
         return slug
 
+class Overview(models.Model):
+
+    name = models.CharField(max_length=255)
+    agreement = models.OneToOneField(Agreement, 
+        on_delete=models.SET_NULL, blank=True, null=True)
+    subtitle = models.CharField(max_length=255, 
+        blank=True)
+    hero_video = models.CharField(max_length=255, 
+        blank=True)
+    hero_image = models.ImageField(
+        storage=storage_backends.PrivateMediaStorage(), 
+        upload_to='images/', blank=True, null=True)
+    story_image = models.ImageField(
+        storage=storage_backends.PrivateMediaStorage(), 
+        upload_to='images/', blank=True, null=True)
+    story_part1 = models.TextField(blank=True)
+    story_part2 = models.TextField(blank=True)
+    story_part3 = models.TextField(blank=True)
+    achievements_text = models.TextField(blank=True)
+    challenges_text = models.TextField(blank=True)
+    commitment_chart_text = models.TextField(blank=True)
+    commitments_image = models.ImageField(
+        storage=storage_backends.PrivateMediaStorage(), 
+        upload_to='images/', blank=True, null=True)
+    about_us = models.TextField(blank=True)
+    methodology = models.TextField(blank=True)
+    report_name = models.CharField(max_length=255, 
+        blank=True)
+    report = models.URLField(max_length=255, blank=True)
+    case_page = models.URLField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('overview-detail', kwargs={
+            'agreement':self.agreement.slug, 'pk':self.id})
+
 class CommitmentCategory(models.Model):
     
     name = models.CharField(max_length=255)
@@ -71,8 +109,10 @@ class CommitmentCategory(models.Model):
     agreement = models.ForeignKey(Agreement,
         on_delete=models.SET_NULL,
         blank=True, null=True)
+    order_num = models.PositiveSmallIntegerField(default=0)
     
     class Meta:
+        ordering = ('order_num',)
         verbose_name_plural = 'commitment categories'
 
     def __str__(self):
@@ -139,6 +179,10 @@ class Commitment(models.Model):
         blank=True)
     progress_toward_goal = models.CharField(max_length=255,
         blank=True)
+    order_num = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ('order_num',)
 
     def __str__(self):
         return self.name
@@ -582,3 +626,36 @@ class Update(models.Model):
         except Exception as error:
             print(error)
             pass
+
+class OverviewModel(models.Model):
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    image = models.ImageField(
+        storage=storage_backends.PrivateMediaStorage(), 
+        upload_to='images/', blank=True, null=True)
+    commitments = models.ManyToManyField(Commitment, 
+        blank=True)
+    overview = models.ForeignKey(Overview, 
+        on_delete=models.SET_NULL, blank=True, null=True)
+    order_id = models.PositiveSmallIntegerField(default=0)
+    is_featured = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+        ordering = ('order_id',)
+
+    def __str__(self):
+        return self.name
+
+class Achievement(OverviewModel):
+
+    pass
+
+class Challenge(OverviewModel):
+
+    pass
+
+class Recommendation(OverviewModel):
+
+    pass

@@ -1,0 +1,183 @@
+{% extends 'microsite/base.html' %}
+{% load i18n %}
+
+{% block body %}
+  <div id="hero">
+    <div class="VideoContainer">
+      <div class="Video" id="player"></div>
+    <img id="play_vid" src="{{ overview.hero_image.url }}" />
+    </div>
+  </div>
+  <div id="story1" class="Section">
+    <div class="Tab-Overview">{% trans "Overview" %}</div>
+    <h2 class="text-center BlueGreen">{% trans "The Story" %}</h2>
+    <div class="SectionContent">
+      <p>
+        <span class="text-uppercase pr-2">
+          <strong>{{ overview.story_part1 }}</strong>
+        </span>{{ overview.story_part2|safe }}
+      </p>
+    </div>
+  </div>
+  <div id="image1" class="BgImage" style="background-image:url('{{ overview.story_image.url }}')"></div>
+  <div id="story2" class="Section">
+    <div class="SectionContent">
+      <p>{{ overview.story_part3|safe }}</p>
+    </div>
+  </div>
+  {% include 'lastmile/achievements.html' %}
+  <div id="challenges" class="Section bg-dark">
+    <h2 class="text-center LightBlue mb-5">{% trans "Challenges Ahead" %}</h2>
+    <div class="SectionContent Grid">
+      {% for challenge in challenge_list %}
+      {% if challenge.name %}
+        <div class="Challenge{% if challenge.is_featured %} Featured{% endif %}">
+          <div class="Challenge-title">{{ challenge.name }}</div>
+          <img src="{{ challenge.image.url }}">
+          <div class="Challenge-description">{{ challenge.description|safe }}</div>
+        </div>
+      {% else %}
+      <div class="ChallengeDescriptions">
+        
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <hr class="AccentBar"></hr>
+    <div class="SectionContent text-white p-3">
+      {{ overview.challenges_text|safe }}
+      <div class="ChartArea bg-white pl-5 pr-3 pt-4 pb-5 mt-5">
+        <h4 class="pt-2">{% trans "Status of Commitments" %}</h4>
+        <div id="id_commitmentChart" width="100%"></div>
+        <p class="text-dark">{{ overview.commitment_chart_text }}</p>
+      </div>
+    </div>
+  </div>
+  <div id="recommendations" class="Section bg-bluegreen">
+    <h2 class="text-center Yellow mb-5">{% trans "Recommendations" %}</h2>
+    <div class="SectionContent p-3">
+      <ul class="White">
+        {% for recommendation in recommendation_list %}
+        <li><span class="White text-uppercase pr-2">{{ recommendation.name }}</span><span class="LightBlue">{{ recommendation.description }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <a href="{% url 'commitment-list' agreement=agreement.slug %}" class="CommitmentsButton">{% trans "Commitments" %} <i class="fal fa-angle-right"></i></a>
+{% endblock %}
+{% block javascript %}
+  <script>
+    $( 'body' ).on( 'click', '.Challenge:not(.Open)', function() {
+      // $( this ).find( '.Challenge-description' ).slideToggle( 'slow' );
+      $( '.Challenge.Open' ).removeClass( 'Open' );
+      $( '.ChallengeDescriptions' ).slideUp( 'fast' );
+      $( this ).addClass( 'Open' );
+      var text = $( this ).find( '.Challenge-description' ).html()
+      $( this ).nextAll( '.ChallengeDescriptions:first' ).html( text );
+      $( this ).nextAll( '.ChallengeDescriptions:first' ).slideDown();
+
+    });
+    $( 'body' ).on( 'click', '.Challenge.Open', function() {
+      $( '.ChallengeDescriptions' ).slideUp( 'fast' );
+      $( this ).removeClass( 'Open' );
+    });
+    // $( '.Challenge' ).hover(function() {
+    //   $(this).find( '.Challenge-description' ).slideDown( 'slow' );
+    // }, function() {
+    //   $(this).find( '.Challenge-description' ).slideUp( 'fast' );
+    // })
+  </script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawCommitmentChart);
+
+    function drawCommitmentChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Date');
+      data.addColumn('number', '{% trans "N/A" %}');
+      data.addColumn('number', '{% trans "Not Started" %}');
+      data.addColumn('number', '{% trans "Delayed" %}');
+      data.addColumn('number', '{% trans "In Progress" %}');
+      data.addColumn('number', '{% trans "Completed" %}');
+
+      data.addRows([
+        ['February 2019', {{ chart_dict.2019.na }}, {{ chart_dict.2019.not_started }}, {{ chart_dict.2019.delayed }}, {{ chart_dict.2019.in_progress }}, {{ chart_dict.2019.completed }}],
+        ['June 2020', {{ chart_dict.2019.na }}, {{ chart_dict.2020.not_started }}, {{ chart_dict.2020.delayed }}, {{ chart_dict.2020.in_progress }}, {{ chart_dict.2020.completed }}],
+      ]);
+
+      var options = {
+        animation: {
+          startup: true,
+          duration: 1000,
+          easing: 'out',
+        },
+        isStacked: 'percent',
+        colors: ['#000000', '#494949', '#FFCC00', '#007D8A', '#74D6DB'],
+        chartArea: {
+          left: 60,
+          width: '75%', 
+          height: '80%',
+        },
+        height: 520,
+        hAxis: {
+          gridlines: {
+            count: 2,
+            color: 'transparent',
+          },
+          textStyle: {
+            fontName: 'Montserrat',
+          },
+        },
+        vAxis: {
+          ticks: [0,.2,.4,.6,.8,1],
+          textStyle: {
+            fontName: 'Montserrat',
+          },
+          // title: 'Rating (scale of 1-10)'
+        },
+        legend: {
+          textStyle: {
+            fontName: 'Montserrat',
+          },
+        },
+        bar: { groupWidth: '55%' },
+      };
+
+      var chart = new google.visualization.ColumnChart(
+        document.getElementById('id_commitmentChart'));
+      chart.draw(data, options);
+    }
+  </script>
+  <script>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            videoId: '{{ overview.hero_video }}',
+            events: {
+              'onReady': onPlayerReady,
+            },
+            playerVars: {rel: 0, modestbranding: 1, ecver: 2, hl:'en'},
+        });
+    }
+
+    function onPlayerReady(event) {
+        $('#play_vid').click(function() {
+            event.target.playVideo();
+        });
+    }
+
+    $(document).ready(function() {
+        $('#player').hide();
+        $('#play_vid').click(function() {
+            $('#player').show();
+            $('#play_vid').hide();
+        });
+    });
+  </script>
+{% endblock %}

@@ -56,5 +56,17 @@ urlpatterns = [
                 path('delete/', views.AttachmentDelete.as_view(), name='attachment-delete'),
             ])),
         ])),
+        path('overview/', include([
+            path('add/', views.OverviewCreate.as_view(), name='overview-create'),
+            path('challenges/', views.ChallengeCreate.as_view(), name='challenge-create'),
+            path('achievements/', views.AchievementCreate.as_view(), name='achievement-create'),
+            path('recommendations/', views.RecommendationCreate.as_view(), name='recommendation-create'),
+            path('<pk>/', include([
+                path('', views.OverviewDetail.as_view(), name='overview-detail'),
+                path('update/', views.OverviewUpdate.as_view(), name='overview-update'),
+                path('delete/', views.OverviewDelete.as_view(), name='overview-delete'),
+            ])),
+            path('methodology/', views.OverviewDetail.as_view(), name='methodology'),
+        ])),
     ])),
 ]

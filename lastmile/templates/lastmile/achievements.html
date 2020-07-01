@@ -1,0 +1,194 @@
+{% load i18n %}
+<style>
+.carousel-control-prev {
+  justify-content: flex-start;
+  margin-left: -2em;
+  opacity:1;
+  text-decoration:none;
+  padding-left:5px;
+}
+.carousel-control-next {
+  justify-content: flex-end;
+  margin-right: -2em;
+  opacity:1;
+  text-decoration:none;
+  padding-right:5px;
+}
+.carousel-inner .carousel-item.active,
+.carousel-inner .carousel-item-next,
+.carousel-inner .carousel-item-prev {
+  display: flex;
+}
+.fa-chevron-right, 
+.fa-chevron-left {
+  color: white;
+}
+@media (min-width: 768px) {
+  .fa-chevron-right, .fa-chevron-left {
+    font-size:2.5em;
+    padding: 20px;
+  }
+  .carousel-inner .carousel-item-right.active,
+  .carousel-inner .carousel-item-next {
+    transform: translateX(50%);
+  }
+  .carousel-inner .carousel-item-left.active, 
+  .carousel-inner .carousel-item-prev {
+    transform: translateX(-50%);
+  }
+  .carousel-inner .carousel-item-right,
+  .carousel-inner .carousel-item-left{ 
+    transform: translateX(0); 
+  }
+  .container {
+    max-width:1000px;
+  }
+}
+@media (max-width:768px) {
+  .fa-chevron-right, .fa-chevron-left {
+    font-size: 2em;
+  }
+  .carousel-inner .carousel-item>div {
+    display:none;
+  }
+  .carousel-inner .carousel-item>div:first-child {
+    display:block;
+    margin:auto;
+  }
+  .carousel-control-prev, .carousel-control-next {
+    margin: -5%;
+  }
+}
+.card, .card-img-top {
+  border-radius:0;
+  border:0;
+  max-width: 420px;
+  margin: auto;
+}
+.carousel-indicator {
+    position: absolute;
+    right: 0;
+    bottom:0;
+    left: 0;
+    z-index:15;
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    margin: 0px 15% -30px 15%;
+    list-style: none
+}
+  .carousel-indicator li {
+    box-sizing: content-box;
+    flex: 0 1 auto;
+    width: 20px;
+    max-width: 20px;
+    height: 20px;
+    margin: 0px 3px -60px 3px;
+    background-color: lightgray;
+    cursor:pointer;
+    border-radius:50%;
+    text-indent:-999px;
+    background-clip: padding-box;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    opacity: .5;
+    transition: opacity .6s ease;
+  }
+  .carousel-indicator > li.selected {
+      opacity:1;
+    }
+@media (min-width:768px) {
+  .carousel-indicator >li:nth-child(even) {
+    display:none;
+  }
+}
+</style>
+
+{% block body %}
+  <div id="achievements" class="Section">
+    <h2 class="text-center Yellow mb-5">{% trans "Achievements to Date" %}</h2>
+    <div class="container my-3">
+      <div class="row mx-auto my-auto">
+        <div id="achievements_carousel" class="carousel slide w-100" data-ride="carousel">
+          <div class="carousel-inner w-100">
+            {% for achievement in overiew.achievement_set.all %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="col col-md-6">
+                  <div class="card">
+                    <img style="object-fit:cover;height:250px" class="d-block card-img-top" src="{{ achievement.image.url }}" alt="{{ achievement.name }}">
+                    <div style="object-fit:cover;height:300px; margin-bottom:3px" class="card-body">
+                      <div class="Achievement-title MediumBlue">{{ achievement.name }}</div>
+                      <p class="Achievement-description">{{ achievement.description|safe }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        <a class="carousel-control-prev" href="#achievements_carousel" role="button" data-slide="prev">
+          <span class="fas fa-chevron-left fa-3x" aria-hidden="true"></span>
+          <span class="sr-only">{% trans "Previous" %}</span>
+        </a>
+        <a class="carousel-control-next" href="#achievements_carousel" role="button" data-slide="next">
+          <span class="fas fa-chevron-right fa-3x" aria-hidden="true"></span>
+          <span class="sr-only">{% trans "Next" %}</span>
+        </a>
+        <ol id="carousel-indicators" class="carousel-indicator">
+          {% for achievement in overiew.achievement_set.all %}
+              <li data-target="#achievements_carousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}selected{% endif %}"></li>
+          {% endfor %}
+        </ol>
+      </div>
+      </div>
+    </div>
+    <hr class="AccentBar"></hr>
+    <h3 class="SectionContent LightGray mt-5">{{ overview.achievements_text }}</h3>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $('#achievements_carousel').carousel({ 
+        interval: 6000,
+        pause: "hover"
+      });
+      $('.carousel .carousel-item').each(function(){
+        var next = $(this).next();
+        if (!next.length) {
+          next = $(this).siblings(':first');
+        }
+        next.children(':first-child').clone().appendTo($(this));
+        for (var i=0;i<4;i++) {
+          next=next.next();
+          if (!next.length) {
+            next = $(this).siblings(':first');
+          }
+          next.children(':first-child').clone().appendTo($(this));
+        }
+      });         
+</script>
+<script>
+  $( document ).ready(function() {
+  var CLASS_CAROUSEL    = '#achievements_carousel';
+  var CLASS_INDICATORS  = '#carousel-indicators';
+  var CLASS_ACTIVE      = CLASS_INDICATORS + '>li.selected';
+  var selectCarousel    = $(CLASS_CAROUSEL); 
+  var mediaSize = window.matchMedia("(min-width:768px)")
+
+  selectCarousel.on('slide.bs.carousel', function (e) {
+    var indexTarget = $(e.relatedTarget).index();
+    if (mediaSize.matches) {
+      indexTarget = indexTarget - indexTarget % 2;
+    } else {
+      indexTarget = indexTarget - indexTarget % 1;
+    }
+    
+    var selectTarget = $(CLASS_INDICATORS + '>li[data-slide-to="' + indexTarget + '"]');
+    if ( !selectTarget.hasClass('selected') ) {
+      $(CLASS_ACTIVE).removeClass('selected');
+      selectTarget.addClass('selected');
+    }
+  });
+});
+</script>
+{% endblock %}

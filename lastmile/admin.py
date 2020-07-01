@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from lastmile.models import Action, Actor, Agreement
-from lastmile.models import Attachment, Commitment, Update
-from lastmile.models import CommitmentCategory
+from lastmile.models import Action, Actor, Agreement, Update
+from lastmile.models import Attachment, Commitment, Overview
+from lastmile.models import CommitmentCategory, Achievement
+from lastmile.models import Challenge, Recommendation
 
 
 
@@ -89,4 +90,39 @@ class UpdateAdmin(admin.ModelAdmin):
     )
     list_select_related = ('commitment', 'actor', 'action')
     list_filter = ('commitment', 'actor', 'action')
+
+@admin.register(Overview)
+class OverviewAdmin(admin.ModelAdmin):
+    list_items = (
+        'name',
+        'agreement',
+    )
+    list_display = list_items
+    list_display_links = list_items
+
+class OverviewModelList():
+    list_items = (
+        'name',
+        'description',
+        'overview',
+        'order_id',
+        'is_featured'
+    )
+    list_display = list_items
+    list_display_links = list_items
+
+@admin.register(Achievement)
+class AchievementAdmin(admin.ModelAdmin, OverviewModelList):
+    pass
+
+@admin.register(Challenge)
+class ChallengeAdmin(admin.ModelAdmin, OverviewModelList):
+    pass
+
+@admin.register(Recommendation)
+class RecommendationAdmin(admin.ModelAdmin, OverviewModelList):
+    pass
+
+
+
 

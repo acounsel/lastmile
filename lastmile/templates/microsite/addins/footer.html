@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="container">
+<!--   <p class="White text-center text-uppercase font-weight-bold">{% trans "For More Information" %}</p> -->
+  <div class="d-flex align-items-start flex-column flex-md-row text-white">
+    <div class="Footer-info d-flex flex-column">
+      <p>{% trans "Read" %}</p>
+      <a href="{{ overview.report }}">{{ overview.report_name }}</a>
+      <a href="{% url 'methodology' agreement=agreement.slug %}">{% trans "Our methodology" %}</a>
+    </div>
+    <div class="Footer-info d-flex flex-column">
+      <p>{% trans "Explore" %}</p>
+      <a href="">{% trans "Case documents" %}</a>
+      <a href="{{ overview.case_page }}">{% trans "Our case page" %}</a>
+      <a href="{% url 'commitment-list' agreement=agreement.slug %}">{% trans "Commitments" %}</a>
+    </div>
+    <div class="Footer-info d-flex flex-column">
+      <p>{% trans "Download" %}</p>
+      <a href="https://scorecard-static.s3-us-west-1.amazonaws.com/media/public/2020+TPC+Commitments+PDF.pdf">{% trans "Commitments Chart PDF" %}</a>
+      <a href="">{% trans "Commitments Chart CSV" %}</a>
+    </div>
+  </div>
+</div>

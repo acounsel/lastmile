@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block body %}
+<h1>{% if form.instance %}Edit{% else %}Add{% endif %} {{ view.model|verbose_name }}</h1>
+{% include 'addins/form.html' %}
+{% endblock %}

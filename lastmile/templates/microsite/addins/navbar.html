@@ -1,0 +1,33 @@
+{% load static %}
+{% load admin_urls %}
+{% load i18n %}
+
+  <nav class="TitleBar align-items-start navbar navbar-dark navbar-expand-sm flex-column flex-xl-row">
+    <div class="LogoBar d-flex justify-content-between">
+      <a class="navbar-brand" href="https://www.accountabilitycounsel.org"><img class="Logo" src="https://scorecard-static.s3-us-west-1.amazonaws.com/Accountability+Counsel_Logo_White2.png"></a>
+    </div>
+    <div class="d-flex flex-column mr-auto">
+      <h1><a class="h1 Title LightBlue" href="{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}">{{ overview.name }}</a></h1>
+      <h2 class="Subtitle">{{ overview.subtitle }}</h2>
+    </div>
+    <div class="align-self-end" id="navbarNav">
+      <ul class="navbar-nav navbar-expand-all w-100">
+        <li class="nav-item dropdown mr-3 ml-auto">
+          <a class="nav-link {% if title == 'Overview' %}Active{% endif %}" href="{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}" id="navbarDropdownMenuLink" role="button" aria-haspopup="true" aria-expanded="false">
+            {% trans "Overview" %}
+          </a>
+          <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuOverview">
+            <a class="dropdown-item" href="{% if title == 'Commitments' %}{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}{% endif %}#story1">{% trans "The Story" %}</a>
+            <a class="dropdown-item" href="{% if title == 'Commitments' %}{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}{% endif %}#achievements">{% trans "Achievements to Date" %}</a>
+            <a class="dropdown-item" href="{% if title == 'Commitments' %}{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}{% endif %}#challenges">{% trans "Challenges Ahead" %}</a>
+            <a class="dropdown-item" href="{% if title == 'Commitments' %}{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}{% endif %}#recommendations">{% trans "Recommendations" %}</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if title == 'Commitments' %}Active{% endif %}" href="{% url 'commitment-list' agreement=agreement.slug %}" id="navbarCommitments" role="button">
+            {% trans "Commitments" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>

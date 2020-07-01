@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% trans overview.name|default:"Scorecard" %} {{ title }}</title>
+    <link rel="icon" type="image/png" href="https://scorecard-static.s3-us-west-1.amazonaws.com/media/public/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://scorecard-static.s3-us-west-1.amazonaws.com/media/public/images/favicon-16x16.png" sizes="16x16">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One|Montserrat:200,400,600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c12b0758b8.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <style>
+      body {
+        background-color: #F9F7F4;
+      }
+      p, a, li, div, .nav-item {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 21px;
+        line-height: 40px;
+      }
+      .Commitments p, .Commitments div {
+        line-height: 30px;
+      }
+      p, div {
+        color: #494949;
+      }
+      a {
+        color: #00B9D4;
+        text-decoration: none;
+      }
+        p a {
+          text-decoration: none;
+        }
+      a:hover {
+        color: #00B9D4;
+      }
+      h1, h2, h3, .h1 {
+        font-family: 'Fjalla One', sans-serif;
+      }
+      h2 {
+        font-size: 66px;
+        padding: 30px 0;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      h3, .h3 {
+        font-size: 40px;
+        line-height: 60px;
+      }
+      h4 {
+        line-height: 30px;
+        font-size: 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .BlueGreen {
+        color: #007D8A;
+      }
+      .Yellow {
+        color: #FFCC00;
+      }
+      .MediumBlue {
+        color: #009BAA;
+      }
+      .LightBlue {
+        color: #74D6DB;
+      }
+      .LightGray {
+        color: #E4E4E4;
+      }
+      .TitleBar {
+        padding: 3rem 3rem 0;
+        width: 100%;
+      }
+      .White {
+        color: #FFFFFF;
+      }
+/*      .navbar {
+        padding: 0 50px 0 0;
+      }*/
+      .navbar .nav-item {
+        color: #FFFFFF !important;
+        font-size: 21px;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: 0;
+      }
+        .navbar .nav-item:first-of-type {
+          padding-right: 50px;
+        }
+      .navbar .nav-item .nav-link {
+        color: #FFFFFF;
+        padding: 0 0 15px;
+        border-bottom: 10px solid #494949;
+        text-decoration: none;
+        transition: all 0.4s;
+      }
+        .navbar .nav-item .nav-link:hover,
+        .navbar .nav-item .nav-link.Active {
+          border-bottom: 10px solid #FFCC00;
+          color: #FFFFFF;
+        }
+      .bg-light {
+        background-color: #F9F7F4 !important;
+      }
+      .bg-dark {
+        background-color: #494949 !important;
+      }
+      .bg-bluegreen {
+        background-color: #007D8A;
+      }
+      .Logo {
+        height: 50px;
+        padding-right: 30px;
+      }
+      .Title {
+        font-family: 'Fjalla One', sans-serif;
+        font-size: 50px;
+        text-transform: uppercase;
+        margin: 0;
+        text-decoration: none;
+      }
+        .Title:hover {
+          color: #74D6DB;
+          text-decoration: none;
+        }
+        .Subtitle {
+          color: white;
+          font-size: 1.3rem;
+          padding: 0 0 3rem;
+          text-transform: none
+          max-width: 800px;
+        }
+      .Translate {
+        border: 0;
+        color: #FFCC00;
+        font-size: 20px;
+        padding: 0;
+        text-decoration: underline;
+        transition: 0.3s all;
+      }
+        .Translate:hover {
+          color: #FFCC00;
+          font-weight: 600;
+        }
+
+      .dropdown-menu {
+        border-radius: 0;
+        border-top: 15px solid transparent;
+        padding: 20px 0;
+      }
+      .dropdown-menu:before {
+        content: "";
+        position: absolute;
+        top:-20px;
+        left: 10%;
+        border: solid 10px transparent;
+        border-bottom-color: #494949;
+
+      }
+      .dropdown-menu .dropdown-item {
+        color: #FFFFFF;
+        font-size: 16px;
+        line-height: 20px;
+        padding: 13px 32px 13px 27px;
+        transition: 0.3s all;
+        text-decoration: none;
+      }
+      .dropdown-menu .dropdown-item:hover {
+        background-color: #2D2D2D;
+      }
+      .VideoContainer img {
+        cursor: pointer;
+        width: 100%;
+        max-height: 700px;
+        object-fit: cover;
+      }
+      .Video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+      #hero {
+        position: relative;
+        min-height: 700px;
+      }
+      iframe {
+        /* optional */
+        width: 100%;
+        height: 100%;
+      }
+      .Section {
+        padding: 70px 0;
+      }
+        .SectionContent {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+          .SectionContent p {
+            padding: 10px 0;
+          }
+          .SectionContent.text-white p {
+            color: #FFFFFF;
+          }
+          .SectionContent.Commitments {
+            max-width: 1200px;
+          }
+      .Tab-Overview {
+        color: #264151;
+        padding: 25px 50px 22px 5%;
+        background-color: #FFCC00;
+        box-shadow: 4px 4px 9px 1px rgba(0,0,0,0.21);
+        font-family: 'Fjalla One', sans-serif;
+        font-size: 35px;
+        max-width: 30%;
+        min-width: 400px;
+        margin-top: -15px;
+        text-transform: uppercase;
+      }
+      .BgImage {
+        /*background-attachment: fixed;*/
+        background-attachment: scroll;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 500px;
+      }
+      .BgImage-1 {
+        background-image: url('https://scorecard-static.s3-us-west-1.amazonaws.com/Camels+(1).JPG');
+      }
+      #achievements {
+        background-color: #264151;
+        height: 1500px;
+      }
+      .Achievement-title {
+        font-family: 'Montserrat-Bold', sans-serif;
+        font-size: 19px;
+        font-weight: 600;
+        text-transform: uppercase;
+        padding-bottom: 6px;
+      }
+      .Achievement-card {
+        background-color: white;
+      }
+/*      .Achievement-description {
+        padding: 3px 4px 2px 4px;
+      }*/
+        .Achievement-description, .Achievement-description a {
+          background-color: white;
+          font-size: 16px;
+          line-height: 26px;
+        }
+      .AccentBar {
+        border: 6px solid #FFCC00;
+        max-width: 25%;
+        margin: 165px 0 50px 0;
+      }
+      .Grid {
+        display: grid;
+/*        grid-auto-flow: dense;*/
+        grid-template-columns: repeat(3, 1fr);
+/*        grid-template-rows: repeat(3, 1fr);*/
+        grid-gap: 2%;
+        max-width: 1000px;
+      }
+      .Challenge {
+        cursor: pointer;
+        transition: all 0.4s;
+        position: relative;
+      }
+        .Challenge.Featured {
+          grid-column-end: span 2;
+        }
+      .Challenge img {
+        object-fit: cover;
+        height: 260px;
+        width: 100%;
+        transition: all 0.4s;
+      }
+        .Challenge.Open::after {
+          content:"";
+          position: absolute;
+          bottom: -20px;
+          left: 50%;
+          border: solid 15px transparent;
+          border-bottom-color: #FFFFFF;
+        }
+        .Challenge-title {
+          background-color: #FFCC00;
+          font-size: 19px;
+          font-weight: 600;
+          padding: 10px 15px;
+          text-transform: uppercase;
+          transition: all 0.4s;
+        }
+        .Challenge-description {
+          display: none;
+          background-color: #FFFFFF;
+          padding: 20px;
+          transition: all 0.3s;
+        }
+        .ChallengeDescriptions {
+          grid-column-end: span 3;
+          background-color: #FFFFFF;
+          display: none;
+          margin-top: -7px;
+          padding: 20px;
+        }
+        .ChallengeDescriptions, .ChallengeDescriptions a, .Challenge-description, .Challenge-description a {
+          font-size: 16px;
+          line-height: 26px;
+        }
+          .Challenge.Open .Challenge-description {
+            height: auto;
+          }
+        .Challenge:hover img, .Challenge:hover .Challenge-title {
+          opacity: 0.8;
+        }
+      .ChartArea p {
+        font-size: 15px;
+        font-style: italic;
+        line-height: 19px;
+        max-width: 100%;
+      }
+      #recommendations ul li {
+        margin-bottom: 15px;
+      }
+      .CommitmentsButton {
+        background-color: #FFCC00;
+        color: #494949;
+        display: block;
+        padding: 40px 0;
+        text-align: center;
+        font-size: 48px;
+        line-height: 80px;
+        font-family: 'Fjalla One', sans-serif;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: all 0.3s;
+      }
+      .CommitmentsButton:hover {
+        color: #FFFFFF;
+        text-decoration: none;
+      }
+      .CommitmentsButton i {
+        padding-left: 10px;
+        font-size: 80px;
+        vertical-align: sub;
+      }
+      .Commitments-hero {
+        background-position: center;
+        padding-top: 80px;
+      }
+      .Commitments .Icon-download {
+        height: 60px;
+        background-color: #494949;
+        border-radius: 6px;
+        color: #FFFFFF;
+        padding: 3px 2px;
+        margin-left: 15px;
+      }
+      .Commitment-category {
+        padding: 0 100px;
+        cursor: pointer;
+      }
+        .Commitment-category h2 {
+          padding: 26px 0;
+          font-size: 50px;
+        }
+        .Commitment-category i {
+          transition-duration: 0.5s;
+        }
+        .Commitment-category--slidedown {
+          display: none;
+        }
+          .Commitment-category--slidedown.Active {
+            display: block;
+          }
+        .Commitment-category.Active i {
+          transform: rotate(180deg);
+          transition-duration: 0.5s;
+        }
+
+      .Commitment-category-list {
+        display: flex;
+      }
+      .Commitment {
+        cursor: pointer;
+        min-width: 400px;
+      }
+      .Commitment-status {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: #548A3D;
+        border: 2px solid #548A3D;
+        min-width: 40px;
+      }
+        .Commitment-status.Progress div {
+          width: 18px;
+          height: 19px;
+          border-radius: 19px 0 0 0;
+          background-color: #F9F7F4;
+        }
+        .Commitment-status.Delayed, 
+        .Commitment-status.Started {
+          background-color: #F9F7F4;
+          border: 2px solid #A22524;
+        }
+          .Commitment-status.Delayed div {
+            margin-left: 18px;
+            width: 19px;
+            height: 19px;
+            border-radius: 0 15px 0 0;
+            background-color: #A22524;
+          }
+      .Commitment-number {
+        width: 75px;
+        line-height: 30px;
+        text-align: center;
+        transition: all 0.3s;
+      }
+      .Commitment-name {
+        max-width: 365px;
+        transition: all 0.3s;
+      }
+        .Commitment.Active .Commitment-name, 
+        .Commitment.Active .Commitment-number,
+        .Commitment:hover .Commitment-name,
+        .Commitment:hover .Commitment-number {
+          background-color: #E7E1DB;
+        }
+        .Commitment:hover .Commitment-name,
+        .Commitment:hover .Commitment-number {
+          background-color: #FFCC00;
+        }
+      .Commitment-descriptions {
+        position: sticky;
+        top:0;
+        background-color: #E7E1DB;
+        padding: 20px 30px;
+      }
+      .Commitment-copy {
+        display: none;
+        position: sticky;
+        top: 10px;
+      }
+        .Commitment-copy.Active {
+          display: block;
+        }
+      .Commitment-description, .Commitment-description a,
+      .Commitment-descriptions p {
+        font-size: 18px;
+        line-height: 25px;
+        margin: 0;
+      }
+        .Commitment-description-mobile {
+          display: none;
+          padding: 20px;
+          border: 2px solid #E7E1DB;
+        }
+        .Commitment-descriptions p {
+          color: #000000;
+        }
+      .Commitment-description-separator {
+        border: 1px solid #FFFFFF;
+      }
+      .StatusKey {
+        border: 1px solid #979797;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        font-size: 16px;
+        max-width: 700px;
+      }
+        .StatusKey div {
+          font-size: 16px;
+        }
+      footer {
+        background-color: #264151;
+        color: #FFFFFF;
+        padding: 50px 0 60px;
+      }
+        footer .container {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        .Footer-info {
+          flex: 1;
+        }
+        .Footer-info p {
+          color: #FFFFFF;
+          font-size: 1.5rem;
+          line-height: 2.2rem;
+          padding: 0 10px;
+          text-transform: uppercase;
+        }
+        .Footer-info a {
+          color: #FFFFFF;
+          font-size: 18px;
+          line-height: 22px;
+          padding: 10px;
+        }
+/*          .Footer-info a:hover {
+            text-decoration: none; 
+          }*/
+         /* footer .Icon {
+            background-color: #FFFFFF;
+            color: #264151;
+            padding: 8px 8px 6px;
+            border-radius: 8px;
+            font-size: 30px;
+            margin-right: 15px;
+          }*/
+      @media only screen and (max-width: 1000px) {
+        .LogoBar {
+          padding: 0;
+          width: 100%;
+          align-items: center;
+        }
+
+      }
+      @media only screen and (max-width: 800px) {
+        .LogoBar {
+          
+        }
+        .navbar-brand {
+          padding-bottom: 30px;
+        }
+        .Title {
+          font-size: 2rem;
+        }
+        .Subtitle {
+          font-size: 1.3rem;
+          line-height: 36px;
+        }
+        .VideoContainer img {
+          min-height: 700px;
+        }
+        .TitleBar {
+          padding: 1.5rem 1.5rem 0;
+        }
+          #navbarNav .navbar-nav {
+            flex-direction: row;
+          }
+          .navbar-nav .nav-item, .navbar .nav-item:first-of-type {
+            margin: 0 !important;
+            padding: 0 20px;
+          }
+        h2 {
+          font-size: 48px;
+        }
+        h3 {
+          font-size: 26px;
+          line-height: 50px;
+        }
+        div {
+          font-size: 19px;
+          line-height: 30px;
+        }
+/*        .TitleBar {
+          padding: 20px;
+        }*/
+        .Tab-Overview {
+          padding: 25px 20px 22px;
+          max-width: 50%
+          min-width: 30%;
+        }
+/*        .AccentBar {
+          margin: 100px 0 30px 0;
+        }*/
+        .SectionContent {
+          padding: 30px;
+        }
+          .SectionContent .HalfWidth {
+            max-width: 100%;
+          }
+        .Grid {
+          grid-template-columns: repeat(1, 1fr);
+          overflow: auto;
+        }
+          .Challenge.Featured {
+            grid-column-end: span 1;
+          }
+          .Challenge.Open .Challenge-description {
+            display: block;
+          }
+          .Challenge.Open::after {
+            display: none;
+          }
+          .ChallengeDescriptions {
+            grid-column-end: span 1;
+            display: none !important;
+          }
+        #recommendations ul {
+          padding-left: 20px;
+        }
+        .Commitments .SectionContent, 
+        .Commitments.SectionContent {
+          padding: 0 20px;
+          margin-top: 0;
+        }
+        .SectionContent.Commitment-category-list {
+          padding: 0;
+        }
+        .Commitment-category {
+          padding: 0 20px;
+        }
+          .Commitment-category i {
+            font-size: 3em;
+          }
+        .Commitment-category h2 {
+          font-size: 30px;
+        }
+        .Commitment-descriptions {
+          display: none;
+        }
+        .Commitment-description-mobile.Open {
+          display: block;
+        }
+        .StatusKey {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+        }
+          .StatusKey .d-flex {
+            margin: 10px;
+          }
+        .Footer-info {
+          margin-bottom: 20px;
+          text-align: center;
+          width: 100%;
+        }
+      }
+    </style>
+    <header class="bg-dark">
+      {% include 'microsite/addins/navbar.html' %}
+      {% block header %}
+      {% endblock %}
+    </header>
+    <main class="bg-light" style="min-height: 700px;">
+      {% block main %}
+        {% block body %}
+        {% endblock %}
+      {% endblock %}
+    </main>
+    <footer class="footer">
+      {% block footer %}
+        {% include 'microsite/addins/footer.html' %}
+      {% endblock %}
+    </footer>
+    <script>
+      var $dropdown = $(".dropdown");
+      var $dropdownMenu = $(".dropdown-menu");
+      var showClass = "show";
+       
+      $(window).on("load resize", function() {
+        if (this.matchMedia("(min-width: 768px)").matches) {
+          $dropdown.hover(
+            function() {
+              const $this = $(this);
+              $this.addClass(showClass);
+              $this.find($dropdownMenu).addClass(showClass);
+            },
+            function() {
+              const $this = $(this);
+              $this.removeClass(showClass);
+              $this.find($dropdownMenu).removeClass(showClass);
+            }
+          );
+        } else {
+          $dropdown.off("mouseenter mouseleave");
+        }
+      });
+    </script>
+    {% block javascript %}
+    {% endblock %}
+  </body>
+</html>

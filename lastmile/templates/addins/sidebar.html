@@ -7,7 +7,7 @@
           <ul class="collapse list-unstyled" id="homeSubmenu">
             {% for agreement in request.user.agreement_set.all %}
               <li>
-                  <a href="{{ agreement.get_absolute_url }}">{{ agreement.name }}</a>
+                <a href="{{ agreement.get_absolute_url }}">{{ agreement.name }}</a>
               </li>
             {% endfor %}
           </ul>
@@ -34,6 +34,21 @@
       </li>
       <li>
         <a href="#">Request Access</a>
+      </li>
+      <li>
+        <a href="#micrositeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Microsite</a>
+         <ul class="collapse list-unstyled" id="micrositeSubmenu">
+            <li>
+              <a href="{% if agreement.overview %}{% url 'overview-update' agreement=agreement.slug pk=agreement.overview.id %}{% else %}{% url 'overview-create' agreement=agreement.slug %}{% endif %}">Site Builder</a>
+              <a href="{% url 'achievement-create' agreement=agreement.slug %}">Achievements</a>
+              <a href="{% url 'challenge-create' agreement=agreement.slug %}">Challenges</a>
+              <a href="{% url 'recommendation-create' agreement=agreement.slug %}">Recommendations</a>
+              {% if agreement.overview %}
+              <a href="{% url 'overview-detail' agreement=agreement.slug pk=agreement.overview.id %}">Preview</a>
+              {% endif %}
+            </li>
+          </ul>
+
       </li>
       
   </ul>

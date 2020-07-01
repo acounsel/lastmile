@@ -10,6 +10,8 @@ from django.urls import reverse, reverse_lazy
 from .functions import get_export_response
 from .models import Action, Actor, Agreement, Attachment
 from .models import Commitment, CommitmentCategory, Update
+from .models import Overview, Achievement, Challenge
+from .models import Recommendation
 
 class ExportMixin():
 
@@ -150,7 +152,7 @@ class CommitmentView(BaseAgreementView):
         'progress_toward_goal']
 
     # def get_queryset(self):
-    #     queryset = super(CommitmentView, self).get_queryset()
+    #     queryset = super().get_queryset()
     #     agreements = self.request.user.agreement_set.all()
     #     return queryset.filter(agreement__in=agreements)
 
@@ -335,17 +337,67 @@ class AttachmentView(BaseAgreementView):
 class AttachmentList(AttachmentView, ListView):
     pass
 
+class AttachmentDetail(AttachmentView, DetailView):
+    pass
+
 class AttachmentCreate(AttachmentView, CreateView):
     
     def form_valid(self, form):
         form.instance.added_by = self.request.user
         return super().form_valid(form)
 
-class AttachmentDetail(AttachmentView, DetailView):
-    pass
-
 class AttachmentUpdate(AttachmentView, UpdateView):
     pass
 
 class AttachmentDelete(AttachmentView, DeleteView):
     pass
+
+class OverviewView(BaseAgreementView):
+    model = Overview
+    fields = ['name', 'subtitle', 'hero_video', 'hero_image',
+        'story_image', 'story_part1', 'story_part2', 
+        'story_part3', 'achievements_text', 'challenges_text',
+        'commitment_chart_text', 'commitments_image', 
+        'about_us', 'methodology', 'report_name', 'report', 
+        'case_page'
+    ]
+
+class OverviewDetail(OverviewView, DetailView):
+    pass
+
+class OverviewCreate(OverviewView, CreateView):
+    
+    def form_valid(self, form):
+        form.instance.agreement = self.get_agreement()
+        return super().form_valid(form)
+
+class OverviewUpdate(OverviewView, UpdateView):
+    pass
+
+class OverviewDelete(OverviewView, DeleteView):
+    pass
+
+class OverviewModelMixin:
+    fields = ['name', 'description', 'image', 'order_id']
+    template_name = 'lastmile/base_form.html'
+    success_url = reverse_lazy('dashboard')
+
+class AchievementView(OverviewModelMixin, BaseAgreementView):
+    model = Achievement
+
+class AchievementCreate(AchievementView, CreateView):
+    pass
+
+class ChallengeView(OverviewModelMixin, BaseAgreementView):
+    model = Challenge
+
+class ChallengeCreate(ChallengeView, CreateView):
+    pass
+
+class RecommendationView(OverviewModelMixin, 
+    BaseAgreementView):
+    model = Recommendation
+
+class RecommendationCreate(RecommendationView, CreateView):
+    pass
+

@@ -5,3 +5,4 @@ django-heroku
 gunicorn
 Boto3
 django-storages
+Pillow
