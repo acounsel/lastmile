@@ -363,7 +363,48 @@ class OverviewView(BaseAgreementView):
     ]
 
 class OverviewDetail(OverviewView, DetailView):
-    pass
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'achievement_list': Achievement.objects.filter(
+                overview=context['overview']),
+            'challenge_list': self.get_challenges(),
+            'recommendation_list': Recommendation.objects.all(),
+            'chart_dict': self.get_chart_dict(
+                context['object'].commitment_set.all()),
+            'title': 'Overview',
+            'redirect_to': reverse('home'),
+        })
+        return context
+
+    def get_challenges(self):
+        challenge_list = []
+        i = 0
+        for challenge in Challenge.objects.filter(
+            overview=self.get_object()):
+            challenge_list.append(challenge)
+            i += 1
+            if challenge.is_featured:
+                i +=1
+            if i == 3:
+                challenge_list.append('DescriptionBlock')
+                i = 0
+        return challenge_list
+
+    def get_chart_dict(self, commitment_list):
+        statuses = Status.objects.filter(
+            commitment__in=commitment_list).order_by('status')
+        chart_dict = {}
+        for year in (2019, 2020):
+            chart_dict[year] = {}
+            year_values = statuses.filter(date__year=year)
+            values = year_values.values('status').annotate(
+                status_count=Count('status')).order_by('status')
+            for value in values:
+                chart_dict[year][value['status']] = \
+                    value['status_count']
+        return chart_dict
 
 class OverviewCreate(OverviewView, CreateView):
     
