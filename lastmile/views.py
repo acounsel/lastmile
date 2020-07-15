@@ -372,9 +372,9 @@ class OverviewDetail(OverviewView, DetailView):
             'challenge_list': self.get_challenges(),
             'recommendation_list': Recommendation.objects \
                 .filter(overview=context['overview']),
-            'chart_dict': self.get_chart_dict(
-                context['object'].agreement \
-                .commitment_set.all()),
+            # 'chart_dict': self.get_chart_dict(
+            #     context['object'].agreement \
+            #     .commitment_set.all()),
             'title': 'Overview',
             'redirect_to': reverse('home'),
         })
