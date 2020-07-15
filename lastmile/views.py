@@ -376,7 +376,7 @@ class OverviewDetail(OverviewView, DetailView):
             #     context['object'].agreement \
             #     .commitment_set.all()),
             'title': 'Overview',
-            'redirect_to': reverse('home'),
+            'redirect_to': '/',
         })
         return context
 
