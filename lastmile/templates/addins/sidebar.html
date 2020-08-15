@@ -40,11 +40,11 @@
          <ul class="collapse list-unstyled" id="micrositeSubmenu">
             <li>
               <a href="{% if agreement.overview %}{% url 'overview-update' agreement=agreement.slug pk=agreement.overview.id %}{% else %}{% url 'overview-create' agreement=agreement.slug %}{% endif %}">Site Builder</a>
-              <a href="{% url 'achievement-create' agreement=agreement.slug %}">Achievements</a>
-              <a href="{% url 'challenge-create' agreement=agreement.slug %}">Challenges</a>
-              <a href="{% url 'recommendation-create' agreement=agreement.slug %}">Recommendations</a>
               {% if agreement.overview %}
-              <a href="{% url 'overview-detail' agreement=agreement.slug pk=agreement.overview.id %}">Preview</a>
+              <a href="{% url 'achievement-list' agreement=agreement.slug pk=agreement.overview.id %}">Achievements</a>
+              <a href="{% url 'challenge-list' agreement=agreement.slug pk=agreement.overview.id %}">Challenges</a>
+              <a href="{% url 'recommendation-list' agreement=agreement.slug pk=agreement.overview.id %}">Recommendations</a>
+              <a target="_blank" href="{% url 'overview-detail' agreement=agreement.slug pk=agreement.overview.id %}">Preview</a>
               {% endif %}
             </li>
           </ul>

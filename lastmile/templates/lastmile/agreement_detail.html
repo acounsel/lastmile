@@ -22,8 +22,8 @@
         <td>{{ commitment.goal }}</td>
         <td>{{ commitment.progress_toward_goal }}</td>
         <td>{{ commitment.get_status_display }} {% if commitment.get_status %}({{ commitment.get_status|title }}){% endif %}</td>
-        <td>
-          {% for action in commitment.get_active_actions %}
+        <td class="bg-{{ commitment.get_status_color }}">
+          {% for action in commitment.get_actions %}
           <p>{{ action.name }} &mdash; {{ action.get_status_display }} {% if action.get_status %}({{ action.get_status|title }}){% endif %}</p>
           {% endfor %}
         </td>

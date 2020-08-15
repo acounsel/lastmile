@@ -5,7 +5,7 @@
     <div class="Footer-info d-flex flex-column">
       <p>{% trans "Read" %}</p>
       <a href="{{ overview.report }}">{{ overview.report_name }}</a>
-      <a href="{% url 'methodology' agreement=agreement.slug %}">{% trans "Our methodology" %}</a>
+      <a href="{% url 'methodology' agreement=agreement.slug pk=overview.id %}">{% trans "Our methodology" %}</a>
     </div>
     <div class="Footer-info d-flex flex-column">
       <p>{% trans "Explore" %}</p>

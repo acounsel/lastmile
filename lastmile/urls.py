@@ -58,15 +58,28 @@ urlpatterns = [
         ])),
         path('overview/', include([
             path('add/', views.OverviewCreate.as_view(), name='overview-create'),
-            path('challenges/', views.ChallengeCreate.as_view(), name='challenge-create'),
-            path('achievements/', views.AchievementCreate.as_view(), name='achievement-create'),
-            path('recommendations/', views.RecommendationCreate.as_view(), name='recommendation-create'),
             path('<pk>/', include([
                 path('', views.OverviewDetail.as_view(), name='overview-detail'),
+                path('challenges/', include([
+                    path('', views.ChallengeList.as_view(), name='challenge-list'),
+                    path('add/', views.ChallengeCreate.as_view(), name='challenge-create'),
+                    path('<om_pk>/', views.ChallengeUpdate.as_view(), name='challenge-update'),
+                ])),
+                path('achievements/', include([
+                    path('', views.AchievementList.as_view(), name='achievement-list'),
+                    path('add/', views.AchievementCreate.as_view(), name='achievement-create'),
+                    path('<om_pk>/', views.AchievementUpdate.as_view(), name='achievement-update'),
+                ])),
+                path('recommendations/', include([
+                    path('', views.RecommendationList.as_view(), name='recommendation-list'),
+                    path('add/', views.RecommendationCreate.as_view(), name='recommendation-create'),
+                    path('<om_pk>/', views.RecommendationUpdate.as_view(), name='recommendation-update'),
+                ])),
                 path('update/', views.OverviewUpdate.as_view(), name='overview-update'),
                 path('delete/', views.OverviewDelete.as_view(), name='overview-delete'),
+                path('methodology/', views.Methodology.as_view(), name='methodology'),
             ])),
-            path('methodology/', views.OverviewDetail.as_view(), name='methodology'),
+            
         ])),
     ])),
 ]

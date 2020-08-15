@@ -363,6 +363,7 @@ class OverviewView(BaseAgreementView):
     ]
 
 class OverviewDetail(OverviewView, DetailView):
+    template_name = 'microsite/home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -408,6 +409,9 @@ class OverviewDetail(OverviewView, DetailView):
                     value['status_count']
         return chart_dict
 
+class Methodology(OverviewView, DetailView):
+    template_name = 'microsite/methodology.html'
+
 class OverviewCreate(OverviewView, CreateView):
     
     def form_valid(self, form):
@@ -424,23 +428,72 @@ class OverviewModelMixin:
     fields = ['name', 'description', 'image', 'order_id']
     template_name = 'lastmile/base_form.html'
     success_url = reverse_lazy('dashboard')
+    pk_url_kwarg = 'om_pk'
+
+    def get_overview(self):
+        return Overview.objects.get(id=self.kwargs.get('pk'))
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        overview = self.get_overview()
+        return queryset.filter(overview=overview)
+
+    def form_valid(self, form):
+        form.instance.overview = self.get_overview()
+        return super().form_valid(form)
+
+    def get_url(self, action):
+        overview = self.get_overview()
+        kwargs = {
+            'agreement': overview.agreement.slug,
+            'pk': overview.id,
+        }
+        model_name = self.model._meta.verbose_name
+        return reverse_lazy('{}-{}'.format(
+            model_name, action), kwargs=kwargs)
+
+    def get_create_url(self):
+        return self.get_url(action='create')
+
+    def get_success_url(self):
+        return self.get_url(action='list')
 
 class AchievementView(OverviewModelMixin, BaseAgreementView):
     model = Achievement
+    model_name = 'achievement'
+
+class AchievementList(AchievementView, ListView):
+    template_name = 'lastmile/overviewmodel_list.html'
 
 class AchievementCreate(AchievementView, CreateView):
+    pass
+
+class AchievementUpdate(AchievementView, UpdateView):
     pass
 
 class ChallengeView(OverviewModelMixin, BaseAgreementView):
     model = Challenge
 
+class ChallengeList(ChallengeView, ListView):
+    template_name = 'lastmile/overviewmodel_list.html'
+
 class ChallengeCreate(ChallengeView, CreateView):
+    pass
+
+class ChallengeUpdate(ChallengeView, UpdateView):
     pass
 
 class RecommendationView(OverviewModelMixin, 
     BaseAgreementView):
     model = Recommendation
 
+class RecommendationList(RecommendationView, ListView):
+    template_name = 'lastmile/overviewmodel_list.html'
+
 class RecommendationCreate(RecommendationView, CreateView):
     pass
+
+class RecommendationUpdate(RecommendationView, UpdateView):
+    pass
+    
 

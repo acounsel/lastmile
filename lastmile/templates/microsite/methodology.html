@@ -1,0 +1,17 @@
+{% extends 'microsite/base.html' %}
+{% load i18n %}
+{% block body %}
+<div id="hero" class="Commitments-hero" style="background-image: url('{{ overview.commitments_image.url  }}')">
+  <h1 class="Tab-Overview">{% trans "About &amp; Methodology" %}</h1>
+</div>
+<div class="SectionContent my-5">
+  <h2 class="h3">About Accountability Counsel</h2>
+  {{ overview.about_us|safe }}
+</div>
+<div class="SectionContent my-5">
+  <h2 class="h3">Methodology</h2>
+  {{ overview.methodology|safe }}
+</div>
+
+{% endblock %}
+

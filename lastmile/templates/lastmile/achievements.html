@@ -111,11 +111,11 @@
       <div class="row mx-auto my-auto">
         <div id="achievements_carousel" class="carousel slide w-100" data-ride="carousel">
           <div class="carousel-inner w-100">
-            {% for achievement in overiew.achievement_set.all %}
+            {% for achievement in overview.achievement_set.all %}
               <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="col col-md-6">
                   <div class="card">
-                    <img style="object-fit:cover;height:250px" class="d-block card-img-top" src="{{ achievement.image.url }}" alt="{{ achievement.name }}">
+                    <img style="object-fit:cover;height:250px" class="d-block card-img-top" {% if achievement.image %}src="{{ achievement.image.url }}"{% endif %} alt="{{ achievement.name }}">
                     <div style="object-fit:cover;height:300px; margin-bottom:3px" class="card-body">
                       <div class="Achievement-title MediumBlue">{{ achievement.name }}</div>
                       <p class="Achievement-description">{{ achievement.description|safe }}</p>

@@ -209,6 +209,9 @@ class Commitment(models.Model):
                 commitment=self,
             )
 
+    def get_actions(self):
+        return self.action_set.order_by('status')
+
     def get_active_actions(self):
         return self.action_set.filter(status=Action.ACTIVE)
 
@@ -650,12 +653,28 @@ class OverviewModel(models.Model):
 
 class Achievement(OverviewModel):
 
-    pass
+    def get_update_url(self):
+        return reverse('achievement-update', kwargs={
+            'agreement':self.overview.agreement.slug,
+            'pk': self.overview.id,
+            'om_pk': self.id
+        })
 
 class Challenge(OverviewModel):
 
-    pass
+    def get_update_url(self):
+        return reverse('challenge-update', kwargs={
+            'agreement':self.overview.agreement.id,
+            'pk': self.overview.id,
+            'om_pk': self.id
+        })
 
 class Recommendation(OverviewModel):
 
-    pass
+    def get_update_url(self):
+        return reverse('recommendation-update', kwargs={
+            'agreement':self.overview.agreement.id,
+            'pk': self.overview.id,
+            'om_pk': self.id
+        })
+
