@@ -9,9 +9,9 @@
     </div>
     <div class="Footer-info d-flex flex-column">
       <p>{% trans "Explore" %}</p>
-      <a href="">{% trans "Case documents" %}</a>
+      <a href="{% url 'microsite-document-list' agreement=agreement.slug pk=overview.pk %}">{% trans "Case documents" %}</a>
       <a href="{{ overview.case_page }}">{% trans "Our case page" %}</a>
-      <a href="{% url 'commitment-list' agreement=agreement.slug %}">{% trans "Commitments" %}</a>
+      <a href="{% url 'microsite-commitment-list' agreement=agreement.slug pk=overview.id %}">{% trans "Commitments" %}</a>
     </div>
     <div class="Footer-info d-flex flex-column">
       <p>{% trans "Download" %}</p>

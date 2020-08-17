@@ -24,7 +24,7 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if title == 'Commitments' %}Active{% endif %}" href="{% url 'commitment-list' agreement=agreement.slug %}" id="navbarCommitments" role="button">
+          <a class="nav-link {% if title == 'Commitments' %}Active{% endif %}" href="{% url 'microsite-commitment-list' agreement=agreement.slug pk=overview.id %}" id="navbarCommitments" role="button">
             {% trans "Commitments" %}
           </a>
         </li>

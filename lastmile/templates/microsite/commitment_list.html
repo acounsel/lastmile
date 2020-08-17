@@ -1,0 +1,128 @@
+{% extends 'microsite/base.html' %}
+{% load i18n %}
+
+{% block body %}
+<div id="hero" class="Commitments-hero" style="background-image: url('{{ overview.commitments_image.url  }}')">
+  <h1 class="Tab-Overview">{% trans "Commitments" %}
+</h1>
+</div>
+{% get_current_language as LANGUAGE_CODE %}
+<div class="SectionContent Commitments my-5">
+  <div class="font-weight-bold text-uppercase text-right mb-3">
+    {% trans "Download Commitments Chart" %}
+    <a href="?lang={{ LANGUAGE_CODE|slice:':2' }}" class="Icon-download"><i class="fas fa-file-pdf fa-fw"></i></a>
+    <a href="" class="Icon-download"><i class="fas fa-file-csv fa-fw"></i></a>
+  </div>
+  {% regroup commitment_list by category as category_list %}
+  {% for category in category_list %}
+  <div class="Commitment-category d-flex justify-content-between align-items-center bg-bluegreen text-white {% if category.grouper.id == active.category.id %}Active{% endif %}">
+    <h2 class="">{{ category.grouper }}</h2>
+    <i class="far fa-angle-down fa-5x"></i>
+  </div>
+  <div class="Commitment-category--slidedown {% if category.grouper.id == active.category.id %}Active{% endif %}">
+    <div class="SectionContent mt-5 mb-4 Commitment-category-list">
+      <div class="Commitment-list">
+      {% for commitment in category.list %}
+        <div id="commitment-{{ commitment.order_num }}{{ commitment.order_letter }}" class="Commitment {% if commitment.category.id == active.category.id %}{% if commitment.id == active.id %}Active{% endif %}{% elif commitment.id == category.list.0.id %}Active{% endif %} d-flex font-weight-bold" commitment="Commitment_{{ commitment.id }}">
+          <div class="Commitment-status {{ commitment.get_status.get_status_display }} mr-3 my-3" title="{{ commitment.get_status.get_status_display }}">
+            <div class="Commitment-status--adjustment"></div>
+          </div>
+          <div class="Commitment-number p-3">{{ commitment.order_num }}{{ commitment.order_letter }}.</div>
+          <div class="Commitment-name py-3 pr-4"{% if "*" in commitment.name %} title="{% trans '* Denotes commitments listed in both Agreement 1 and Agreement 2.' %}"{% endif %}>{{ commitment.name }}</div>
+        </div>
+        <div class="Commitment-description-mobile">
+          <p class="font-weight-bold">{% trans "About this commitment" %}</p>
+          <p class="Commitment-description">{{ commitment.description|safe }}</p>
+          {% if commitment.get_status.description %}
+          <p class="font-weight-bold">{% trans "Implementation status of this commitment" %}</p>
+          <p class="Commitment-description">{{ commitment.get_status.description|safe }}</p>
+          {% endif %}
+          <hr class="Commitment-description-separator">
+          <p class="Commitment-description"><span class=" text-uppercase pr-3">{% trans "Original Timeline" %}: </span><strong>{{ commitment.original_timeline }}</strong></p>
+          {% for status in commitment.status_set.all %}
+          <div class="d-flex align-items-center py-2 w-50">
+            <p class="Commitment-description text-uppercase col p-0">{{ status.date.year }} Status:</p>
+            <div class="Commitment-status {{ status.get_status_display }}" title="{{ commitment.get_status.get_status_display }}">
+              <div class="Commitment-status--adjustment"></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      </div>
+      <div class="Commitment-descriptions">
+        {% for commitment in category.list %}
+        <div class="Commitment-copy Commitment_{{ commitment.id }}  {% if commitment.category.id == active.category.id %}{% if commitment.id == active.id %}Active{% endif %}{% elif commitment.id == category.list.0.id %}Active{% endif %}">
+          <p class="font-weight-bold">{% trans "About this commitment" %}</p>
+          <p class="Commitment-description">{{ commitment.description|safe }}</p>
+          <p class="font-weight-bold">{% trans "Implementation status of this commitment" %}</p>
+          <p class="Commitment-description">{{ commitment.get_status.description|safe }}</p>
+          <hr class="Commitment-description-separator">
+          <p class="Commitment-description"><span class=" text-uppercase pr-3">{% trans "Original Timeline" %}: </span><strong>{{ commitment.original_timeline }}</strong></p>
+          {% for status in commitment.status_set.all %}
+          <div class="d-flex align-items-center py-2 w-50">
+            <p class="Commitment-description text-uppercase col p-0">{{ status.date.year }} Status:</p>
+            <div class="Commitment-status {{ status.get_status_display }}" title="{{ commitment.get_status.get_status_display }}">
+              <div class="Commitment-status--adjustment"></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="StatusKey-parent SectionContent mb-5">
+      <div class="StatusKey ml-auto">
+        <div class="mx-2 d-flex align-items-center">
+          <div class="Commitment-status Started mr-2">
+            <div class="Commitment-status--adjustment"></div>
+          </div>{% trans "Not Started" %}
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <div class="Commitment-status Delayed mr-2">
+            <div class="Commitment-status--adjustment"></div>
+          </div>{% trans "Delayed" %}
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <div class="Commitment-status Progress mr-2">
+            <div class="Commitment-status--adjustment"></div>
+          </div>{% trans "In Progress" %}
+        </div>
+        <div class="mx-2 d-flex align-items-center">
+          <div class="Commitment-status mr-2"></div>{% trans "Completed" %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<a href="{% url 'overview-detail' agreement=agreement.slug pk=overview.id %}" class="CommitmentsButton"><i class="fal fa-angle-left pr-4"></i>{% trans "Overview" %}</a>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  {% if request.GET.commitment %}
+  $( 'html, body' ).animate({
+    scrollTop: $( '.Commitment_{{ active.id }}' ).offset().top
+    }, 1000);
+  {% endif %}
+  $( '.Commitment-category' ).click(function() {
+    $( this ).next( '.Commitment-category--slidedown' ).slideToggle();
+    $( this ).toggleClass( 'Active' );
+  });
+
+  $( '.Commitment' ).click(function() {
+    var commitment_id = $( this ).attr('commitment');
+    var commitment_section = $( this ).parent().parent();
+    commitment_section.find( '.Commitment-copy' ).hide();
+    commitment_section.find( '.Commitment' ).removeClass( 'Active' );
+    $( this ).addClass( 'Active' );
+    $( '.'+ commitment_id ).slideDown();
+    $( '.Commitment-description-mobile' ).removeClass( 'Open' );
+    $( this ).next().toggleClass( 'Open' );
+    // $( '.'+ commitment_id ).animate({width:'toggle'},200);
+  });
+
+</script>
+{% endblock %}

@@ -11,7 +11,7 @@ from .functions import get_export_response
 from .models import Action, Actor, Agreement, Attachment
 from .models import Commitment, CommitmentCategory, Update
 from .models import Overview, Achievement, Challenge
-from .models import Recommendation
+from .models import Recommendation, Document
 
 class ExportMixin():
 
@@ -411,6 +411,38 @@ class OverviewDetail(OverviewView, DetailView):
 
 class Methodology(OverviewView, DetailView):
     template_name = 'microsite/methodology.html'
+
+class MicrositeCommitmentList(CommitmentList):
+    template_name = 'microsite/commitment_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'overview': Overview.objects.get(
+                id=self.kwargs.get('pk'))
+        })
+        return context
+
+class MicrositeDocumentList(BaseAgreementView, ListView):
+    model = Document
+    template_name = 'microsite/document_list.html'
+
+    def get_overview(self):
+        return Overview.objects.get(
+                id=self.kwargs.get('pk'))
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        overview = self.get_overview()
+        return queryset.filter(overview=overview)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'overview': Overview.objects.get(
+                id=self.kwargs.get('pk'))
+        })
+        return context
 
 class OverviewCreate(OverviewView, CreateView):
     

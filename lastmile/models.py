@@ -651,6 +651,23 @@ class OverviewModel(models.Model):
     def __str__(self):
         return self.name
 
+class Document(models.Model):
+
+    name = models.CharField(max_length=255)
+    document = models.FileField(
+        storage=storage_backends.PrivateMediaStorage(), 
+        upload_to='docs/', blank=True, null=True)
+    description = models.TextField(blank=True)
+    date = models.DateField(blank=True, null=True)
+    overview = models.ForeignKey(Overview, 
+        on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('date',)
+
 class Achievement(OverviewModel):
 
     def get_update_url(self):

@@ -78,6 +78,8 @@ urlpatterns = [
                 path('update/', views.OverviewUpdate.as_view(), name='overview-update'),
                 path('delete/', views.OverviewDelete.as_view(), name='overview-delete'),
                 path('methodology/', views.Methodology.as_view(), name='methodology'),
+                path('commitments/', views.MicrositeCommitmentList.as_view(), name='microsite-commitment-list'),
+                path('documents/', views.MicrositeDocumentList.as_view(), name='microsite-document-list'),
             ])),
             
         ])),
