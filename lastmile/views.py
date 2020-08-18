@@ -359,7 +359,8 @@ class OverviewView(BaseAgreementView):
         'story_part3', 'achievements_text', 'challenges_text',
         'commitment_chart_text', 'commitments_image', 
         'about_us', 'methodology', 'report_name', 'report', 
-        'case_page'
+        'case_page', 'highlight_color', 'special_text_color',
+        'bg_color', 'bg_color_2', 'bg_color_3'
     ]
 
 class OverviewDetail(OverviewView, DetailView):

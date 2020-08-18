@@ -62,6 +62,21 @@ class Agreement(models.Model):
             slug = slugify(self.name) + str(iterator)
         return slug
 
+    def get_commitment_dict(self):
+        cdict = {}
+        for status in Commitment.STATUS_CHOICES:
+            cdict[status[1]] = self.commitment_set.filter(
+                status=status[0])
+        return cdict
+
+    def get_action_dict(self):
+        action_items = self.get_action_items()
+        adict = {}
+        for status in Action.STATUS_CHOICES:
+            adict[status[1]] = action_items.filter(
+                status=status[0])
+        return adict
+
 class Overview(models.Model):
 
     name = models.CharField(max_length=255)
@@ -193,7 +208,7 @@ class Commitment(models.Model):
     order_num = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
-        ordering = ('order_num',)
+        ordering = ('category', 'order_num')
 
     def __str__(self):
         return self.name
@@ -319,7 +334,8 @@ class Actor(models.Model):
         i = 0
         for action in self.action_set.filter(
             status=Action.ACTIVE):
-            i += 1
+            if action.get_status == 'overdue':
+                i += 1
         return i
 
 class Action(models.Model):
