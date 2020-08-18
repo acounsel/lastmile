@@ -92,6 +92,17 @@ class Overview(models.Model):
         blank=True)
     report = models.URLField(max_length=255, blank=True)
     case_page = models.URLField(max_length=255, blank=True)
+    highlight_color = models.CharField(max_length=7, 
+        blank=True, null=True)
+    special_text_color = models.CharField(max_length=7, 
+        blank=True, null=True)
+    bg_color = models.CharField(max_length=7, 
+        blank=True, null=True)
+    bg_color_2 = models.CharField(max_length=7, 
+        blank=True, null=True)
+    bg_color_3 = models.CharField(max_length=7, 
+        blank=True, null=True)
+
 
     def __str__(self):
         return self.name

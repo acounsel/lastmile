@@ -64,16 +64,16 @@
         text-transform: uppercase;
       }
       .BlueGreen {
-        color: #007D8A;
+        color: {{ overview.special_text_color|default:"#74D6DB" }};
       }
       .Yellow {
-        color: #FFCC00;
+        color: {{ overview.highlight_color|default:"#FFCC00" }};
       }
       .MediumBlue {
         color: #009BAA;
       }
       .LightBlue {
-        color: #74D6DB;
+        color: {{ overview.special_text_color|default:"#74D6DB" }};
       }
       .LightGray {
         color: #E4E4E4;
@@ -107,7 +107,7 @@
       }
         .navbar .nav-item .nav-link:hover,
         .navbar .nav-item .nav-link.Active {
-          border-bottom: 10px solid #FFCC00;
+          border-bottom: 10px solid {{ overview.highlight_color|default:"#FFCC00" }};
           color: #FFFFFF;
         }
       .bg-light {
@@ -117,7 +117,7 @@
         background-color: #494949 !important;
       }
       .bg-bluegreen {
-        background-color: #007D8A;
+        background-color: {{ overview.special_text_color|default:"#74D6DB" }};
       }
       .Logo {
         height: 50px;
@@ -131,7 +131,7 @@
         text-decoration: none;
       }
         .Title:hover {
-          color: #74D6DB;
+          color: {{ overview.special_text_color|default:"#74D6DB" }};;
           text-decoration: none;
         }
         .Subtitle {
@@ -143,14 +143,14 @@
         }
       .Translate {
         border: 0;
-        color: #FFCC00;
+        color: {{ overview.highlight_color|default:"#FFCC00" }};
         font-size: 20px;
         padding: 0;
         text-decoration: underline;
         transition: 0.3s all;
       }
         .Translate:hover {
-          color: #FFCC00;
+          color: {{ overview.highlight_color|default:"#FFCC00" }};
           font-weight: 600;
         }
 
@@ -222,7 +222,7 @@
       .Tab-Overview {
         color: #264151;
         padding: 25px 50px 22px 5%;
-        background-color: #FFCC00;
+        background-color: {{ overview.highlight_color|default:"#FFCC00" }};
         box-shadow: 4px 4px 9px 1px rgba(0,0,0,0.21);
         font-family: 'Fjalla One', sans-serif;
         font-size: 35px;
@@ -265,7 +265,7 @@
           line-height: 26px;
         }
       .AccentBar {
-        border: 6px solid #FFCC00;
+        border: 6px solid {{ overview.highlight_color|default:"#FFCC00" }};
         max-width: 25%;
         margin: 165px 0 50px 0;
       }
@@ -300,7 +300,7 @@
           border-bottom-color: #FFFFFF;
         }
         .Challenge-title {
-          background-color: #FFCC00;
+          background-color: {{ overview.highlight_color|default:"#FFCC00" }};
           font-size: 19px;
           font-weight: 600;
           padding: 10px 15px;
@@ -340,7 +340,7 @@
         margin-bottom: 15px;
       }
       .CommitmentsButton {
-        background-color: #FFCC00;
+        background-color: {{ overview.highlight_color|default:"#FFCC00" }};
         color: #494949;
         display: block;
         padding: 40px 0;
@@ -446,7 +446,7 @@
         }
         .Commitment:hover .Commitment-name,
         .Commitment:hover .Commitment-number {
-          background-color: #FFCC00;
+          background-color: {{ overview.highlight_color|default:"#FFCC00" }};
         }
       .Commitment-descriptions {
         position: sticky;
