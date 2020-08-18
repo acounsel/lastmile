@@ -8,15 +8,21 @@
     <div class="px-3 pt-2">
     {% for key, value in agreement.get_commitment_dict.items %}
       <div class="d-flex pb-2"><span class="font-weight-bold pr-3 flex-grow-1">{{ key }}:</span>{{ value.count }}</div>
+      {% if key == 'Active' %}
+      <div class="d-flex pb-2 text-danger"><span class="font-weight-bold pl-3 flex-grow-1">Overdue:</span>{{ agreement.get_overdue_actions.count }}</div>
+      {% endif %}
     {% endfor %}
     </div>
-    <div id="id_commitmentChart"></div>
+    <div class="w-100" id="id_commitmentChart"></div>
   </div>
   <div class="card w-25 mt-5 mx-2 p-3">
     <h5 class="text-uppercase text-dark font-weight-bold text-center">Action Items</h5>
     <div class="px-3 pt-2">
     {% for key, value in agreement.get_action_dict.items %}
       <div class="d-flex pb-2"><span class="font-weight-bold pr-3 flex-grow-1">{{ key }}:</span>{{ value.count }}</div>
+      {% if key == 'Active' %}
+      <div class="d-flex pb-2 text-danger"><span class="font-weight-bold pl-3 flex-grow-1">Overdue:</span>{{ agreement.get_overdue_actions.count }}</div>
+      {% endif %}
     {% endfor %}
     </div>
     <div id="id_actionChart"></div>
@@ -45,18 +51,24 @@
 
     var data = google.visualization.arrayToDataTable([
       ['Status', 'Number'],
-      {% for key, value in agreement.get_action_dict.items %}
+      {% for key, value in agreement.get_commitment_dict.items %}
       ['{{ key }}', {{ value.count }}],
       {% endfor %}
     ]);
 
     var options = {
-      colors: ['#1b5869', '#42bb9a', '#bec3c7', '#9953b5', '#4c96da'],
+      colors: ['#bec3c7', '#42bb9a', '#2B7A78', '#F76C6C', '#17252A'],
       backgroundColor: '#DEF2F1',
       legend: 'none',
+      chartArea: {
+        left: 0,
+        right: 0,
+        width: '100%',
+      },
+      height: 250
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('id_actionChart'));
+    var chart = new google.visualization.PieChart(document.getElementById('id_commitmentChart'));
 
     chart.draw(data, options);
   }
@@ -69,7 +81,7 @@
 
     var data = google.visualization.arrayToDataTable([
       ['Status', 'Number'],
-      {% for key, value in agreement.get_commitment_dict.items %}
+      {% for key, value in agreement.get_action_dict.items %}
       ['{{ key }}', {{ value.count }}],
       {% endfor %}
     ]);
@@ -78,9 +90,10 @@
       colors: ['#bec3c7', '#42bb9a', '#2B7A78', '#F76C6C', '#17252A'],
       backgroundColor: '#DEF2F1',
       legend: 'none',
+      height: 250
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('id_commitmentChart'));
+    var chart = new google.visualization.PieChart(document.getElementById('id_actionChart'));
 
     chart.draw(data, options);
   }

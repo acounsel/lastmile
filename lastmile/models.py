@@ -334,7 +334,7 @@ class Actor(models.Model):
         i = 0
         for action in self.action_set.filter(
             status=Action.ACTIVE):
-            if action.get_status == 'overdue':
+            if action.get_status() == 'overdue':
                 i += 1
         return i
 
