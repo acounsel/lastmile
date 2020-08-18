@@ -69,6 +69,13 @@ class Agreement(models.Model):
                 status=status[0])
         return cdict
 
+    def get_overdue_commitments(self):
+        overdue = []
+        for item in self.commitment_set.all():
+            if item.get_status() == 'overdue':
+                overdue.append(item.id)
+        return Commitment.objects.filter(id__in=overdue)
+
     def get_action_dict(self):
         action_items = self.get_action_items()
         adict = {}
