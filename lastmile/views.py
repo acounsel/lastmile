@@ -76,10 +76,30 @@ class AttachmentMixin():
         messages.success(request, 'Attachment Added')
         return redirect(value.get_absolute_url())
 
+class FilterMixin():
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filter_dict = {}
+        for key, value in self.request.GET.items():
+            if value == 'overdue':
+                queryset = self.get_overdue_items(queryset)
+            else:
+                filter_dict[key] = value
+        return queryset.filter(**filter_dict)
+
+    def get_overdue_items(self, queryset):
+        overdue = []
+        for item in queryset:
+            if item.get_status() == 'overdue':
+                overdue.append(item.id)
+        return queryset.filter(id__in=overdue)
+    
 class BaseView(LoginRequiredMixin, View):
     login_url = '/login/'
 
-class BaseAgreementView(AgreementMixin, BaseView):
+class BaseAgreementView(FilterMixin, AgreementMixin, 
+    BaseView):
     pass
 
 class DeleteView(StaffMixin, DeleteView):
@@ -101,7 +121,15 @@ class AgreementView(BaseAgreementView):
         return queryset.filter(users=self.request.user)
 
 class AgreementDetail(AgreementView, DetailView):
-    pass
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        context['chart_data'] = {
+            'commitment': obj.get_commitment_dict(),
+            'action': obj.get_action_dict()
+        }
+        return context   
 
 class AgreementCreate(AgreementView, CreateView):
     pass

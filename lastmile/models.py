@@ -65,9 +65,18 @@ class Agreement(models.Model):
     def get_commitment_dict(self):
         cdict = {}
         for status in Commitment.STATUS_CHOICES:
-            cdict[status[1]] = self.commitment_set.filter(
+            cdict[status[0]] = self.commitment_set.filter(
                 status=status[0])
+            if status[0] == 'active':
+                cdict = self.separate_overdue_items(cdict)
         return cdict
+
+    def get_overdue_items(self, queryset):
+        overdue = []
+        for item in queryset:
+            if item.get_status() == 'overdue':
+                overdue.append(item.id)
+        return queryset.filter(id__in=overdue)
 
     def get_overdue_commitments(self):
         overdue = []
@@ -80,9 +89,19 @@ class Agreement(models.Model):
         action_items = self.get_action_items()
         adict = {}
         for status in Action.STATUS_CHOICES:
-            adict[status[1]] = action_items.filter(
+            adict[status[0]] = action_items.filter(
                 status=status[0])
+            if status[0] == 'active':
+                adict = self.separate_overdue_items(adict)
         return adict
+
+    def separate_overdue_items(self, item_dict):
+        queryset = item_dict['active']
+        overdue_items = self.get_overdue_items(queryset)
+        item_dict['overdue'] = overdue_items
+        item_dict['active'] = queryset.exclude(
+            id__in=overdue_items.values_list('id', flat=True))
+        return item_dict
 
 class Overview(models.Model):
 

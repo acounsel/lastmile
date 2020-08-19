@@ -7,10 +7,7 @@
     <h5 class="text-uppercase text-dark font-weight-bold text-center">Commitments</h5>
     <div class="px-3 pt-2">
     {% for key, value in agreement.get_commitment_dict.items %}
-      <div class="d-flex pb-2"><span class="font-weight-bold pr-3 flex-grow-1">{{ key }}:</span>{{ value.count }}</div>
-      {% if key == 'Active' %}
-      <div class="d-flex pb-2 text-danger"><span class="font-weight-bold pl-3 flex-grow-1">Overdue:</span>{{ agreement.get_overdue_commitments.count }}</div>
-      {% endif %}
+      <div class="d-flex pb-2 {% if key == 'overdue' %}text-danger{% endif %}"><span class="font-weight-bold pr-3 flex-grow-1">{{ key|title }}:</span>{{ value.count }}</div>
     {% endfor %}
     </div>
     <div class="w-100" id="id_commitmentChart"></div>
@@ -19,10 +16,7 @@
     <h5 class="text-uppercase text-dark font-weight-bold text-center">Action Items</h5>
     <div class="px-3 pt-2">
     {% for key, value in agreement.get_action_dict.items %}
-      <div class="d-flex pb-2"><span class="font-weight-bold pr-3 flex-grow-1">{{ key }}:</span>{{ value.count }}</div>
-      {% if key == 'Active' %}
-      <div class="d-flex pb-2 text-danger"><span class="font-weight-bold pl-3 flex-grow-1">Overdue:</span>{{ agreement.get_overdue_actions.count }}</div>
-      {% endif %}
+      <div class="d-flex pb-2 {% if key == 'overdue' %}text-danger{% endif %}"><span class="font-weight-bold pr-3 flex-grow-1">{{ key|title }}:</span>{{ value.count }}</div>
     {% endfor %}
     </div>
     <div id="id_actionChart"></div>
@@ -33,9 +27,9 @@
     {% for actor in agreement.actor_set.all %}
       <div class="d-flex pb-2"><span class="font-weight-bold pr-3 flex-grow-1">{{ actor }}</span></div>
       <ul>
-        <li><span class="font-weight-bold">Pending/Active: </span>{{ actor.get_ongoing_actions.count }}</li>
-        <li><span class="font-weight-bold">Overdue: </span>{{ actor.get_overdue_actions }}</li>
-        <li><span class="font-weight-bold">Completed: </span>{{ actor.get_completed_actions.count }}</li>
+        <li><a href="{% url 'action-list' agreement=agreement.slug %}?status=active&responsible_parties={{ actor.id }}"><span class="font-weight-bold">Pending/Active: </span>{{ actor.get_ongoing_actions.count }}</a></li>
+        <li><a href="{% url 'action-list' agreement=agreement.slug %}?status=overdue&responsible_parties={{ actor.id }}"><span class="font-weight-bold">Overdue: </span>{{ actor.get_overdue_actions }}</a></li>
+        <li><a href="{% url 'action-list' agreement=agreement.slug %}?status=complete&responsible_parties={{ actor.id }}"><span class="font-weight-bold">Completed: </span>{{ actor.get_completed_actions.count }}</a></li>
       </ul>
     {% endfor %}
     </div>
@@ -43,6 +37,7 @@
   
 </div>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+{% for key, chart_dict in chart_data.items %}
 <script>
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
@@ -51,13 +46,16 @@
 
     var data = google.visualization.arrayToDataTable([
       ['Status', 'Number'],
-      {% for key, value in agreement.get_commitment_dict.items %}
-      ['{{ key }}', {{ value.count }}],
-      {% endfor %}
+      ['Pending', {{ chart_dict.pending.count }}],
+      ['Active (Not overdue)', {{ chart_dict.active.count }}],
+      ['Overdue', {{ chart_dict.overdue.count }}],
+      ['Complete', {{ chart_dict.complete.count }}],
+      ['Failed', {{ chart_dict.failed.count }}],
+      ['Unknown', {{ chart_dict.unknown.count }}],
     ]);
 
     var options = {
-      colors: ['#bec3c7', '#42bb9a', '#2B7A78', '#F76C6C', '#17252A'],
+      colors: ['#bec3c7', '#42bb9a', '#F76C6C', '#2B7A78', '#F76C6C', '#17252A'],
       backgroundColor: '#DEF2F1',
       legend: 'none',
       chartArea: {
@@ -68,34 +66,10 @@
       height: 250
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('id_commitmentChart'));
+    var chart = new google.visualization.PieChart(document.getElementById('id_{{ key }}Chart'));
 
     chart.draw(data, options);
   }
 </script>
-<script>
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
-  function drawChart() {
-
-    var data = google.visualization.arrayToDataTable([
-      ['Status', 'Number'],
-      {% for key, value in agreement.get_action_dict.items %}
-      ['{{ key }}', {{ value.count }}],
-      {% endfor %}
-    ]);
-
-    var options = {
-      colors: ['#bec3c7', '#42bb9a', '#2B7A78', '#F76C6C', '#17252A'],
-      backgroundColor: '#DEF2F1',
-      legend: 'none',
-      height: 250
-    };
-
-    var chart = new google.visualization.PieChart(document.getElementById('id_actionChart'));
-
-    chart.draw(data, options);
-  }
-</script>
+{% endfor %}
 {% endblock %}

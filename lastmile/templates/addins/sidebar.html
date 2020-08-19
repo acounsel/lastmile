@@ -1,7 +1,7 @@
 <nav id="sidebar">
 
   <ul class="list-unstyled components">
-      <p>{{ agreement.name }}</p>
+      <p><a href="{% url 'agreement-detail' agreement=agreement.slug %}">{{ agreement.name }}</a></p>
       <li class="active">
           <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Switch Agreements</a>
           <ul class="collapse list-unstyled" id="homeSubmenu">
