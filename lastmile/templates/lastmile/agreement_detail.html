@@ -3,24 +3,17 @@
 <h1>Last Mile</h1>
 <h2 class="text-lightgreen">{{ agreement.name }}</h2>
 <div class="d-flex justify-content-around">
+  {% for model, chart_dict in chart_data.items %}
   <div class="card w-25 mt-5 mx-2 py-3 px-4">
-    <h5 class="text-uppercase text-dark font-weight-bold text-center">Commitments</h5>
+    <h5 class="text-uppercase text-dark font-weight-bold text-center">{{ model }}</h5>
     <div class="px-3 pt-2">
-    {% for key, value in agreement.get_commitment_dict.items %}
-      <div class="d-flex pb-2 {% if key == 'overdue' %}text-danger{% endif %}"><span class="font-weight-bold pr-3 flex-grow-1">{{ key|title }}:</span>{{ value.count }}</div>
+    {% for key, value in chart_dict.items %}
+      <div class="d-flex pb-2 {% if key == 'overdue' %}text-danger{% endif %}"><span class="font-weight-bold pr-3 flex-grow-1">{{ value.0 }}:</span>{{ value.1.count }}</div>
     {% endfor %}
     </div>
-    <div class="w-100" id="id_commitmentChart"></div>
+    <div class="w-100" id="id_{{ model }}Chart"></div>
   </div>
-  <div class="card w-25 mt-5 mx-2 p-3">
-    <h5 class="text-uppercase text-dark font-weight-bold text-center">Action Items</h5>
-    <div class="px-3 pt-2">
-    {% for key, value in agreement.get_action_dict.items %}
-      <div class="d-flex pb-2 {% if key == 'overdue' %}text-danger{% endif %}"><span class="font-weight-bold pr-3 flex-grow-1">{{ key|title }}:</span>{{ value.count }}</div>
-    {% endfor %}
-    </div>
-    <div id="id_actionChart"></div>
-  </div>
+  {% endfor %}
   <div class="card w-25 mt-5 mx-2 p-3">
     <h5 class="text-uppercase text-dark font-weight-bold text-center">Actors</h5>
     <div class="px-3 pt-2">
@@ -46,12 +39,12 @@
 
     var data = google.visualization.arrayToDataTable([
       ['Status', 'Number'],
-      ['Pending', {{ chart_dict.pending.count }}],
-      ['Active (Not overdue)', {{ chart_dict.active.count }}],
-      ['Overdue', {{ chart_dict.overdue.count }}],
-      ['Complete', {{ chart_dict.complete.count }}],
-      ['Failed', {{ chart_dict.failed.count }}],
-      ['Unknown', {{ chart_dict.unknown.count }}],
+      ['{{ chart_dict.pending.0 }}', {{ chart_dict.pending.1.count }}],
+      ['{{ chart_dict.active.0 }}', {{ chart_dict.active.1.count }}],
+      ['{{ chart_dict.overdue.0 }}', {{ chart_dict.overdue.1.count }}],
+      ['{{ chart_dict.complete.0 }}', {{ chart_dict.complete.1.count }}],
+      ['{{ chart_dict.failed.0 }}', {{ chart_dict.failed.1.count }}],
+      ['{{ chart_dict.unknown.0 }}', {{ chart_dict.unknown.1.count }}],
     ]);
 
     var options = {

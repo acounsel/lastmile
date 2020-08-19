@@ -54,11 +54,11 @@
     </div>
   </div>
   <div id="recommendations" class="Section bg-bluegreen">
-    <h2 class="text-center Yellow mb-5">{% trans "Recommendations" %}</h2>
+    <h2 class="text-center text-white mb-5">{% trans "Recommendations" %}</h2>
     <div class="SectionContent p-3">
       <ul class="White">
         {% for recommendation in recommendation_list %}
-        <li><span class="White text-uppercase pr-2">{{ recommendation.name }}</span><span class="LightBlue">{{ recommendation.description }}</span></li>
+        <li><span class="White text-uppercase pr-2">{{ recommendation.name }}</span><span class="Yellow">{{ recommendation.description }}</span></li>
         {% endfor %}
       </ul>
     </div>

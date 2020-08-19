@@ -62,14 +62,29 @@ class Agreement(models.Model):
             slug = slugify(self.name) + str(iterator)
         return slug
 
-    def get_commitment_dict(self):
-        cdict = {}
-        for status in Commitment.STATUS_CHOICES:
-            cdict[status[0]] = self.commitment_set.filter(
-                status=status[0])
+    def get_status_dict(self, model, queryset):
+        status_dict = {}
+        for status in model.STATUS_CHOICES:
+            status_dict[status[0]] = (
+                status[1], 
+                queryset.filter(status=status[0])
+            )
             if status[0] == 'active':
-                cdict = self.separate_overdue_items(cdict)
-        return cdict
+                status_dict = self.separate_overdue_items(
+                    status_dict)
+        return status_dict
+
+    def get_commitment_dict(self):
+        return self.get_status_dict(
+            model=Commitment, 
+            queryset=self.commitment_set.all()
+        )
+
+    def get_action_dict(self):
+        return self.get_status_dict(
+            model=Action, 
+            queryset=self.get_action_items()
+        )
 
     def get_overdue_items(self, queryset):
         overdue = []
@@ -85,22 +100,16 @@ class Agreement(models.Model):
                 overdue.append(item.id)
         return Commitment.objects.filter(id__in=overdue)
 
-    def get_action_dict(self):
-        action_items = self.get_action_items()
-        adict = {}
-        for status in Action.STATUS_CHOICES:
-            adict[status[0]] = action_items.filter(
-                status=status[0])
-            if status[0] == 'active':
-                adict = self.separate_overdue_items(adict)
-        return adict
-
     def separate_overdue_items(self, item_dict):
-        queryset = item_dict['active']
+        queryset = item_dict['active'][1]
         overdue_items = self.get_overdue_items(queryset)
-        item_dict['overdue'] = overdue_items
-        item_dict['active'] = queryset.exclude(
-            id__in=overdue_items.values_list('id', flat=True))
+        item_dict['overdue'] = ('Overdue', overdue_items)
+        item_dict['active'] = (
+            'Active (not overdue)',
+            queryset.exclude(
+                id__in=overdue_items.values_list(
+                    'id', flat=True))
+        )
         return item_dict
 
 class Overview(models.Model):
