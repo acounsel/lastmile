@@ -248,6 +248,9 @@ class ActionList(ActionView, ListView):
     
     def get_queryset(self):
         queryset = super(ActionList, self).get_queryset()
+        if self.get_agreement():
+            queryset = queryset.filter(
+                commitment__agreement=self.get_agreement())
         if self.kwargs.get('status'):
             if self.kwargs.get('status') == 'overdue':
                 agreement = self.get_agreement()
